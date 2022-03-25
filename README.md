@@ -6,4 +6,6 @@ Profesor: [Gustavo A. García](https://gusgarciacruz.github.io/cv)
 **Temas**<br>
 [Una breve introducción a R](https://gusgarciacruz.github.io/EbookR_introduccion/)
 
-[Modelos lineales de datos panel](https://gusgarciacruz.github.io/EconometriaAvanzada/ModelosPanel/ModelosPanel.html)<br>
+[Modelos lineales de datos panel](https://gusgarciacruz.github.io/EconometriaAvanzada/ModelosPanel/ModelosPanel.html)
+
+[Trabajo de investigación](https://gusgarciacruz.github.io/EconometriaAvanzada/TrabajoInvestigación/Research work 2022-I.pdf)
