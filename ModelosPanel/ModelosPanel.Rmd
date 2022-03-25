@@ -585,7 +585,7 @@ En este ejercicio vamos a estudiar los derterminantes de los salarios teniendo e
 Los datos para este ejercicio proviene de la *National Longitudinal Survey of Young Working Women* de los Estados Unidos. En los siguientes links se encuentran los datos, la descripción dellada de los datos y el código utilizado en R:
 - [Datos](https://www.stata-press.com/data/r17/nlswork.dta)
 - [Descripción de la información](https://rdrr.io/rforge/sampleSelection/man/nlswork.html)
-- [Código en R]()
+- [Código en R](https://eafit-my.sharepoint.com/:u:/g/personal/ggarci24_eafit_edu_co/EcYdaLLyvJpFhzGqoiAACxgBl5RGkSA23C9M3KYmZK5IgA?e=Ht1ASP)
 
 ---
 # <span style="font-size:70%">Ejercicio aplicado en R: determinantes de los salarios con un panel de datos</span>
