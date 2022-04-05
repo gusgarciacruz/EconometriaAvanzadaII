@@ -8,4 +8,6 @@ Profesor: [Gustavo A. García](https://gusgarciacruz.github.io/cv)
 
 [Modelos lineales de datos panel](https://gusgarciacruz.github.io/EconometriaAvanzada/ModelosPanel/ModelosPanel.html)
 
+[Estimation of linear panel data models using GMM](https://gusgarciacruz.github.io/EconometriaAvanzada/ModelosPanelGMM/ModelosPanelGMM.html)
+
 [Trabajo de investigación](https://gusgarciacruz.github.io/EconometriaAvanzada/TrabajoInvestigacion/Researchwork2022-I.pdf)
