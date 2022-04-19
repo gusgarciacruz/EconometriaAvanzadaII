@@ -10,4 +10,6 @@ Profesor: [Gustavo A. García](https://gusgarciacruz.github.io/cv)
 
 [Estimation of linear panel data models using GMM](https://gusgarciacruz.github.io/EconometriaAvanzada/ModelosPanelGMM/ModelosPanelGMM.html)
 
+[Estimación bajo exogeneidad secuencial](https://gusgarciacruz.github.io/EconometriaAvanzada/ExogeneidadSecuencial/ExogeneidadSecuencial.html)
+
 [Trabajo de investigación](https://gusgarciacruz.github.io/EconometriaAvanzada/TrabajoInvestigacion/Researchwork2022-I.pdf)
