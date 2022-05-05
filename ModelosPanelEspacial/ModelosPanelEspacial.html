@@ -64,6 +64,15 @@ border-radius: 15px;
 text-align: justify;
 }
 
+div.block { 
+background-color: #E1E1FF;
+padding: 10px;
+border: 1px solid white;
+margin-left: 25px;
+border-radius: 15px;
+text-align: justify;
+}
+
 &lt;/style&gt;
 
 
@@ -100,7 +109,7 @@ Link slides en formato [PDF](https://gusgarciacruz.github.io/EconometriaAvanzada
 
 - &lt;span style="font-size:150%"&gt;[&lt;span style="color:black"&gt;Análisis confirmatorio de datos espaciales](#confirmatorio)&lt;/span&gt; &lt;br&gt;
 
-- &lt;span style="font-size:150%"&gt;[&lt;span style="color:black"&gt;Regresión espacial](#regresión)&lt;/span&gt; &lt;br&gt;
+- &lt;span style="font-size:150%"&gt;[&lt;span style="color:black"&gt;Regresión espacial](#regresion)&lt;/span&gt; &lt;br&gt;
 
 - &lt;span style="font-size:150%"&gt;[&lt;span style="color:black"&gt;Ejercicio aplicado en R](#r)&lt;/span&gt; 
 
@@ -355,17 +364,18 @@ Definiciones de `\(\textbf{W}\)` basadas en la utilización de la distancia entr
 
 Definiciones de `\(\textbf{W}\)` basadas en la utilización de la distancia entre regiones:
 
-- Case et al. (1993): `\(\textbf{W}\)` basada en distancias económicas, `\(w_{ij}=\frac{1}{\left|x_{i}-x_{j}\right|}\)`\\
-	`\(x_{i}\)` y `\(x_{j}\)`: observaciones de características socioeconómicas, tales como la renta per capita\\
-	\item Vayá et al. (1998a, 1998b) y López-Bazo et al. (1999): `\(W\)` recoge el grado de intercambio comercial entre regiones analizadas
+- Case et al. (1993): `\(\textbf{W}\)` basada en distancias económicas, `\(w_{ij}=\frac{1}{\left|x_{i}-x_{j}\right|}\)`
+	`\(x_{i}\)` y `\(x_{j}\)`: observaciones de características socioeconómicas, tales como la renta per capita
+- Vayá et al. (1998a, 1998b) y López-Bazo et al. (1999): `\(\textbf{W}\)` recoge el grado de intercambio comercial entre regiones analizadas
 
-Otras consideraciones sobre `\(\textbf{W}\)`
-- La matriz de pesos debe ser exógena\\
+Otras consideraciones sobre `\(\textbf{W}\)`:
+&lt;p style="margin-bottom: -1em"&gt;
+- La matriz de pesos debe ser exógena
 - Estandarización de la matriz `\(\textbf{W}\)`
 	- se divide cada elemento `\(w_{ij}\)` por la suma total de la fila a la que pertenece, de forma que la suma de cada fila será igual a la unidad
 `$$w_{ij}^{*}=\frac{w_{ij}}{\sum_{j}^{n} w_{ij}}$$`
 	-  la posibilidad de ponderar por igual la influencia total que recibe cada región de sus vecinas, con independencia del número total de vecinos de cada una de ellas, explicaría dicha transformación
-	- Anselin (1988) plantea que la estandarización de \textbf{W} no es siempre adecuada, especialmente cuando ésta se basa en un concepto de distancia dado que, en este caso, la matriz estandarizada carecería de significado 
+	- Anselin (1988) plantea que la estandarización de `\(\textbf{W}\)` no es siempre adecuada, especialmente cuando ésta se basa en un concepto de distancia dado que, en este caso, la matriz estandarizada carecería de significado 
 	
 ---
 # &lt;span style="font-size:80%"&gt;Autocorrelación o dependencia espacial&lt;/span&gt;
@@ -412,8 +422,8 @@ name: exploratorio
 
 &lt;ins&gt;Indicadores globales de asociación espacial&lt;/ins&gt;
 &lt;p style="margin-bottom: -1em"&gt;
-- La dependencia espacial se resume en un sólo indicador\\
-- Suelen utilizarse para conocer el rango de interacción espacial en los datos\\
+- La dependencia espacial se resume en un sólo indicador
+- Suelen utilizarse para conocer el rango de interacción espacial en los datos
 - Estadísticos: I de Moran y C de Geary
 
 
@@ -456,6 +466,7 @@ name: confirmatorio
 - &lt;span style="color:blue"&gt;Autocorrelación espacial residual&lt;/span&gt;: cuando se deduce la existencia de autocorrelación residual, se reespecifica el término de error con el objetivo de incorporar dicha estructura de dependencia espacial en el mismo
 
 - &lt;span style="color:blue"&gt;Autocorrelación espacial sustantiva&lt;/span&gt;: en este caso se procede a incorporar la variable dependiente retardada espacialmente como una variable explicativa más en el modelo  
+
 ---
 # &lt;span style="font-size:80%"&gt;Análisis confirmatorio de datos espaciales&lt;/span&gt;
 &lt;font size = "5"&gt;
@@ -478,13 +489,375 @@ En el caso lineal:
 `$$u_{i}\sim N(0,\sigma^2), i=1,...,n$$`
 Supuestos:
 &lt;p style="margin-bottom: -1em"&gt;
-- Los valores observados en la localización `\(i\)` son independientes de aquellos en la localización `\(j\)`
-- Los residuales son independientes `\((E[u_{i}u_{j}]=E[u_{i}]E[u_{j}]=0)\)`
+&lt;div class = "block"&gt;
+&lt;li&gt; Los valores observados en la localización i son independientes de aquellos en la localización j
+&lt;li&gt; Los residuales son independientes `\(\Longrightarrow E[u_{i}u_{j}]=E[u_{i}]E[u_{j}]=0\)`
+&lt;/div&gt;
+
+El supuesto de independencia simplifica enormemente el modelo, pero puede ser difícil de justificar en algunos contextos 
+
+---
+# &lt;span style="font-size:80%"&gt;Regresión espacial&lt;/span&gt;
+&lt;font size = "5"&gt;
+
+&lt;ins&gt;**&lt;span style="color:blue"&gt;PGD no espacial&lt;/span&gt;**&lt;/ins&gt;
+
+Con dos vecinos `\(i\)` y `\(j\)`:
+
+`$$y_{i}=\alpha_{j}y_{j}+\textbf{x}_{i}\boldsymbol\beta+u_{i}$$`
+`$$y_{j}=\alpha_{i}y_{i}+\textbf{x}_{j}\boldsymbol\beta+u_{j}$$`
+`$$u_{i}\sim N(0,\sigma^2), i=1$$`
+`$$u_{j}\sim N(0,\sigma^2), j=2$$`
+Supuestos:
+&lt;p style="margin-bottom: -1em"&gt;
+&lt;div class = "block"&gt;
+&lt;li&gt; Los valores observados en la localización i dependen de aquellos en la localización j y viceversa
+&lt;li&gt; El PGD es "simultáneo"
+&lt;/div&gt;
+
+---
+# &lt;span style="font-size:80%"&gt;Regresión espacial&lt;/span&gt;
+&lt;font size = "5"&gt;
+
+&lt;ins&gt;**&lt;span style="color:blue"&gt;PGD espacial&lt;/span&gt;**&lt;/ins&gt;
+
+Con `\(n\)` observaciones, se puede generalizar:
+
+`$$y_{i}=\rho \displaystyle\sum_{j=1}^{n}$$` `$$w_{ij}y_{j}+\textbf{x}_{i}\boldsymbol\beta+u_{i}$$`
+`$$u_{i}\sim N(0,\sigma^2), i=1,...,n$$`
+En notación matricial:
+`$$\textbf{Y}=\rho \textbf{W}\textbf{Y}+\textbf{X}\boldsymbol\beta+\textbf{u}$$`
+`$$\textbf{u}\sim N(0,\sigma^2\textbf{I}_{n}), i=1,...,n$$`
+donde `\(\textbf{W}\)` es la matriz de pesos espaciales, `\(\rho\)` es un parámetro escalar de autocorrelación espacial e `\(\textbf{I}_{n}\)` es una matriz identidad `\(n\times n\)`
+
+---
+# &lt;span style="font-size:80%"&gt;Regresión espacial&lt;/span&gt;
+&lt;spam style="font-size:110%"&gt;
+
+&lt;ins&gt;**&lt;span style="color:blue"&gt;PGD espacial&lt;/span&gt;**&lt;/ins&gt;
+
+- Cuando `\(\rho=0\)`, la variable no es espacialmente autocorrelacionada. La información sobre una medida en una localización no nos da información de los valores de las localizaciones vecinas `\(\Longrightarrow\)` &lt;span style="color:blue"&gt;independencia espacial
+
+- Cuando `\(\rho&gt;0\)`, la variable es positivamente autocorrelacionada espacialmente. Valores vecinos tienden a ser similares unos a otros `\(\Longrightarrow\)` &lt;span style="color:blue"&gt;clustering 
+
+- Cuando `\(\rho&lt;0\)`, la variable es negativamente autocorrelacionada espacialmente. Valores vecinos tienden a ser diferentes unos a otros `\(\Longrightarrow\)` &lt;span style="color:blue"&gt;segregación
+
+.left-column[
+&lt;center&gt;
+`\(\rho=0\)`
+&lt;img src="g1a.png" width="90%" style="display: block; margin: auto;" /&gt;
+]
+
+.left-column[
+&lt;center&gt;
+`\(\rho&gt;0\)`
+&lt;img src="g1b.png" width="90%" style="display: block; margin: auto;" /&gt;
+]
+
+.left-column[
+&lt;center&gt;
+`\(\rho&lt;0\)`
+&lt;img src="g1c.png" width="90%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+# &lt;span style="font-size:80%"&gt;Regresión espacial&lt;/span&gt;
+&lt;font size = "5"&gt;
+
+Manski (1993) resalta que existen tres diferentes tipos de efectos interactivos que pueden explicar por qué una observación asociada con una localización específica puede depender de otra localización:
+
+1. &lt;span style="color:blue"&gt;Efectos de interacción endógenos&lt;/span&gt;: donde el comportamiento de una unidad espacial (o sus tomadores de decisiones) en una localización depende de la decisión tomada por otras unidades espaciales
+
+2. &lt;span style="color:blue"&gt;Efectos de interacción exógenos&lt;/span&gt;: donde el comportamiento de una unidad espacial en una localización depende variables explicativas independientes, de otra unidad espacial
+
+3. &lt;span style="color:blue"&gt;Efectos correlacionados&lt;/span&gt;: donde similares características no observadas dan como resultado un comportamiento similar
+
+---
+# &lt;span style="font-size:80%"&gt;Regresión espacial&lt;/span&gt;
+&lt;spam style="font-size:120%"&gt;
+
+El modelo de Manski (1993) o modelo más general (&lt;span style="color:blue"&gt;*General Nesting spatial model - GNSM*&lt;/span&gt;) en tiene la forma:
+
+`$$\textbf{Y}=\rho \textbf{W}\textbf{Y} + \alpha\boldsymbol\iota_{N} + \textbf{X}\boldsymbol\beta + \textbf{W}\textbf{X}\boldsymbol\theta + \textbf{u}$$`
+`$$\textbf{u}=\lambda \textbf{W}\textbf{u} + \boldsymbol\epsilon$$`
+`\(\textbf{W}\textbf{Y}\)`: efectos de interacción endógenos entre las variables dependientes  
+`\(\textbf{W}\textbf{X}\)`: efectos de interacción exógenos entre las variables independientes  
+`\(\textbf{Wu}\)`: efectos de interacción entre los términos de error de las diferentes unidades espaciales  
+`\(\rho\)`: coeficiente espacial autorregresivo  
+`\(\lambda\)`: coeficiente espacial de autocorrelación  
+`\(\theta\)` y `\(\beta\)`: vectores `\(K\times 1\)` de parámetros fijos y desconocidos
+
+El modelo &lt;span style="color:blue"&gt;espacio-tiempo&lt;/span&gt; se extiende con efectos específicos espaciales y de tiempo, y tiene la forma:
+
+`$$\textbf{Y}_t=\rho \textbf{W}\textbf{Y}_t + \alpha\boldsymbol\iota_{N} + \textbf{X}_t\boldsymbol\beta + \textbf{W}\textbf{X}_t\boldsymbol\theta + \boldsymbol\mu + \xi_t\iota_{N} + \textbf{u}_t$$`
+`$$\textbf{u}_t=\lambda \textbf{W}\textbf{u}_t + \boldsymbol\epsilon_t$$`
+donde `\(\boldsymbol\mu=(\mu_1,...,\mu_N)'\)`. Los efectos específicos de espacio y tiempo pueden ser tratados como efectos fijos o efectos aleatorios
+
+---
+# &lt;span style="font-size:80%"&gt;Regresión espacial&lt;/span&gt;
+&lt;font size = "5"&gt;
+
+El siguiente diagrama resume una familia de 8 modelos econométricos lineales espaciales en &lt;span style="color:blue"&gt;sección cruzada:
+
+&lt;img src="m1.png" width="150%" style="display: block; margin: auto;" /&gt;
+
+---
+# &lt;span style="font-size:80%"&gt;Regresión espacial&lt;/span&gt;
+&lt;font size = "5"&gt;
+
+El siguiente diagrama resume una familia de 8 modelos econométricos lineales espaciales en &lt;span style="color:blue"&gt;datos panel&lt;/span&gt; (con efectos fijos o aleatorios, y con o sin efectos específicos de tiempo):
+
+&lt;img src="m2.png" width="150%" style="display: block; margin: auto;" /&gt;
+
+---
+# &lt;span style="font-size:80%"&gt;Regresión espacial&lt;/span&gt;
+&lt;spam style="font-size:120%"&gt;
+
+&lt;ins&gt;**&lt;span style="color:blue"&gt;Ineficiencia de los estimadores MCO&lt;/span&gt;**&lt;/ins&gt;
+
+- En un contexto de series de tiempo, los estimadores MCO siguen siendo consistentes incluso cuando la variable dependiente rezagada esta presente en el modelo, siempre que el términos de error no muestre correlación serial
+
+- Mientras el estimador puede ser sesgado en muestras pequeñas, éste puede aún ser usado para inferencia asintótica
+
+- En un contexto espacial, estas reglas no se mantienen, independientemente de las propiedades del término de error
+
+- Consideremos el modelo SAR de primer orden en corte transversal (covariables omitidas):
+
+`$$\textbf{Y}=\rho \textbf{W}\textbf{Y} + \boldsymbol\epsilon$$`
+- El estimador MCO para `\(\rho\)` es:
+
+`$$\widehat{\rho} = \left((\textbf{W}\textbf{Y})'(\textbf{W}\textbf{Y})\right)^{-1} (\textbf{W}\textbf{Y})'\textbf{Y} = \rho + \left((\textbf{W}\textbf{Y})'(\textbf{W}\textbf{Y})\right)^{-1} (\textbf{W}\textbf{Y})'\boldsymbol\epsilon$$`
+- Similar a series de tiempo, la esperanza del segundo término no es igual a cero
+
+---
+# &lt;span style="font-size:80%"&gt;Regresión espacial&lt;/span&gt;
+&lt;font size = "5"&gt;
+
+&lt;ins&gt;**&lt;span style="color:blue"&gt;Ineficiencia de los estimadores MCO&lt;/span&gt;**&lt;/ins&gt;
+
+- Asintóticamente, el estimador MCO será consistente si se cumplen dos condiciones:
+`$$\text{plim } N^{-1}(\textbf{W}\textbf{Y})'(\textbf{W}\textbf{Y})=\textbf{Q}\text{ una matriz finita no singular}$$` 
+`$$\text{plim } N^{-1}(\textbf{W}\textbf{Y})'\boldsymbol\epsilon=\textbf{0}$$`
+- Si bien la primera condición se puede satisfacer con restricciones adecuadas sobre `\(\rho\)` y la estructura de `\(\textbf{W}\)`, la segunda no se mantiene en el caso especial:
+
+`$$\text{plim }N^{-1}(\textbf{W}\textbf{Y})'\boldsymbol\epsilon=\text{plim } N^{-1}\boldsymbol\epsilon'(\textbf{W})(\textbf{I}_{N}-\rho \textbf{W})^{-1}\boldsymbol\epsilon \neq \textbf{0}$$`
+- La presencia de `\(\textbf{W}\)` en la expresión resulta en una forma cuadrática en el término de error
+
+- A menos que `\(\rho=0\)`, el `\(\text{plim}\)` no convergerá a cero
+
+---
+# &lt;span style="font-size:80%"&gt;Regresión espacial&lt;/span&gt;
+&lt;font size = "5"&gt;
+
+&lt;ins&gt;**&lt;span style="color:blue"&gt;Métodos de estimación&lt;/span&gt;**&lt;/ins&gt;
+
+Tres métodos han sido desarrollados en la literatura para estimar modelos que incluyen efectos de interacción espacial:
+
+- ML: Máxima verosimilitud
+
+- IV/GMM: variables instrumentales o método de los momentos generalizados
+
+- MCMC: \textit{Bayesian Markov Chain Monte Carlo approach}
+
+---
+# &lt;span style="font-size:80%"&gt;Regresión espacial&lt;/span&gt;
+&lt;spam style="font-size:130%"&gt;
+
+&lt;ins&gt;**&lt;span style="color:blue"&gt;Comparación de modelos&lt;/span&gt;**&lt;/ins&gt;
+
+- El esquema de los 7 modelos espaciales parece sugerir que la mejor estrategia para probar por efectos de interacción espacial es iniciar por el modelo general: `\(GNSM\)`
+
+- Sin embargo, como Manski (1993) plantea, al menos uno de los `\(K+2\)` efectos de interacción debe ser excluido, ya que de otra forma los parámetros no podrán ser identificados `\(\Longrightarrow\)` De acuerdo a Manski (1993) no existen limitaciones técnicas para estimar el modelo, pero los parámetros estimados no podrán interpretarse de manera adecuada, ya que los efectos endógenos y exógenos no pueden distinguirse entre sí
+
+- Se esta divido entonces en aplicar dos enfoques: general-a-específico o específico-a-general
+
+- LeSage y Pace (2009) argumentan que el modelo Durbin espacial es el mejor punto de partida
+
+- Florax et al. (2003) han encontrado que una expansión de una ecuación de regresión lineal con variables espacialmente rezagadas, condicional a los resultados sobre pruebas de especificación incorrectas, supera el enfoque general-a-específico para encontrar el verdadero proceso generador de datos
+
+---
+# &lt;span style="font-size:80%"&gt;Regresión espacial&lt;/span&gt;
+&lt;spam style="font-size:115%"&gt;
+
+&lt;ins&gt;**&lt;span style="color:blue"&gt;Comparación de modelos&lt;/span&gt;**&lt;/ins&gt;
+
+Partiendo del siguiente modelo de regresión lineal:
+`$$\textbf{Y} = \textbf{X}\boldsymbol\beta + \boldsymbol\epsilon$$`
+`$$\boldsymbol\epsilon \sim N(\textbf{0},\sigma^{2}\textbf{I})$$`
+la hipótesis de no autocorrelación espacial puede ser contrastada a partir de los siguientes estadísticos:  
+&lt;p style="margin-bottom: -1em"&gt;
+- La I de Moran
+
+- Tests estadísticos basados en el principio de multiplicadores de Lagrange (LM):
+&lt;p style="margin-bottom: -1em"&gt;
+  - LM-Lag
+	- Robust LM-Lag
+	- LM-Error
+	- Robust LM-Error
+	- LM-SARMA
+	
+- En los tests LM los dos primeros se refieren al *spatial lag model* como alternativa, los siguientes dos se refieren al *spatial error model* como alternativa y el último se refiere a un modelo con *spatial lag* y *spatial error*
+
+---
+# &lt;span style="font-size:80%"&gt;Regresión espacial&lt;/span&gt;
+&lt;spam style="font-size:115%"&gt;
+
+&lt;ins&gt;**&lt;span style="color:blue"&gt;Comparación de modelos&lt;/span&gt;**&lt;/ins&gt;
+
+- Todos los tests comparten una misma hipótesis nula: la ausencia de dependencia espacial
+
+- Sin embargo, el test de la I de Moran no tiene una hipótesis alternativa claramente definida. Con lo cual no sirve para discriminar entre la existencia de un esquema de autocorrelación espacial residual o en la variable dependiente
+
+- Por otra parte, tanto la I de Moran como los contrastes basados en el principio de LM requieren de la normalidad del término de perturbación así como la linealidad del modelo de regresión
+
+- Los tests robustos (Robust LM-Lag y Robust LM-Error) prueban la dependencia espacial robusto a la presencia del otro. Es decir, que el Robust LM-Error prueba por dependencia en el error en la posible presencia errónea de una variable endógena retardada espacialmente, y el Robust LM-Lag al revés
+
+- Lo importante a recordar respecto a los tests robustos es que estos sólo deben considerarse cuando la versión estándar (LM-Lag o LM-Error) son estadísticamente significativos
+
+- Los tests robustos ayudan a determinar que tipo de dependencia espacial existe. Si las medidas robustas de lag y error son ambas significativas, la estructura de la autocorrelación espacial estará determinada por el test robusto con mayor valor
+
+---
+# &lt;span style="font-size:80%"&gt;Regresión espacial&lt;/span&gt;
+&lt;font size = "5"&gt;
+&lt;p style="margin-bottom: -1em"&gt;
+&lt;ins&gt;**&lt;span style="color:blue"&gt;Comparación de modelos&lt;/span&gt;**&lt;/ins&gt;
+&lt;p style="margin-bottom: -2em"&gt;
+La estrategia simple propuesta por Anselin (2005) y Florax et al (2003) es (*&lt;span style="color:blue"&gt;The bottom-up approach&lt;/span&gt;*):
+
+&lt;img src="rules.png" width="37%" style="display: block; margin: auto;" /&gt;
+
+---
+# &lt;span style="font-size:80%"&gt;Regresión espacial&lt;/span&gt;
+&lt;font size = "5"&gt;
+&lt;p style="margin-bottom: -1em"&gt;
+&lt;ins&gt;**&lt;span style="color:blue"&gt;Comparación de modelos&lt;/span&gt;**&lt;/ins&gt;
+
+La estrategia de LeSage y Pace (2009) (*&lt;span style="color:blue"&gt;The top-down approach&lt;/span&gt;*):
+
+&lt;img src="LeSage.png" width="80%" style="display: block; margin: auto;" /&gt;
+
+---
+# &lt;span style="font-size:80%"&gt;Regresión espacial&lt;/span&gt;
+&lt;font size = "5"&gt;
+&lt;p style="margin-bottom: -1em"&gt;
+&lt;ins&gt;**&lt;span style="color:blue"&gt;Comparación de modelos&lt;/span&gt;**&lt;/ins&gt;
+
+La estrategia de Elhorst (2010):
+
+&lt;img src="Elhorst.png" width="73%" style="display: block; margin: auto;" /&gt;
+
+---
+# &lt;span style="font-size:80%"&gt;Regresión espacial&lt;/span&gt;
+&lt;spam style="font-size:93%"&gt;
+
+&lt;ins&gt;**&lt;span style="color:blue"&gt;Comparación de modelos&lt;/span&gt;**&lt;/ins&gt;
+
+Por tanto, Elhorst (2010) propone el siguiente procedimiento para determinar qué modelo es el candidato más probable para explicar los datos:
+
+1. Estime el modelo por MCO y pruebe si el *spatial lag model - SAR* o el *spatial error model - SEM* es más apropiado para describir los datos. Para esto, se puede utilizar el LM-test propuesto por Anselin (1988) y el robust LM-test propuesto por Anselin et al. (1996)
+
+2. Si el modelo MCO es rechazado en favor del *spatial lag model*, *spatial error model* o en favor de ambos modelos, entonces el modelo Durbin espacial debería ser estimado
+
+3. Si estos modelos son estimados por ML, un LR test puede ser usado para probar las hipótesis:
+&lt;p style="margin-bottom: -1em"&gt;
+ - `\(H_{0}: \theta=0 \Longrightarrow\)` prueba si el modelo Durbin espacial se puede simplificar en el *spatial lag model*  
+&lt;p style="margin-bottom: -1em"&gt;
+ - `\(H_{0}:\theta+\rho\beta=0 \Longrightarrow\)` prueba si el modelo Durbin espacial se puede simplificar en el *spatial error model*
+				
+	 - Si `\(H_{0}:\theta=0\)` y `\(H_{0}: \theta+\rho\beta=0\)` son rechazadas `\(\Longrightarrow\)` modelo Durbin espacial
+	 - Si `\(H_{0}: \theta=0\)` no puede ser rechazada `\(\Longrightarrow\)` *spatial lag model* (siempre que el (robust) LM-test diga lo mismo)
+	 - Si `\(H_{0}: \theta+\rho\beta=0\)` no puede ser rechazada `\(\Longrightarrow\)` *spatial error model* (siempre que el (robust) LM-test diga lo mismo)
+	 - Si el (robust) LM-test a punta a un modelo diferente que el LR test `\(\Longrightarrow\)` modelo Durbin espacial
+
+4. Si el modelo MCO es estimado y no rechaza en favor del *spatial lag model* y el *spatial error model*, el modelo MCO deberá ser re-estimado incluyendo `\(\textbf{WX}\)` o una particular selección de estas `\(K\)` variables para probar `\(H_{0}: \theta=0\)`
+
+ - Si la hipótesis no puede ser rechazada `\(\Longrightarrow\)` modelo MCO
+ - Si la hipótesis es rechazada `\(\Longrightarrow\)` modelo Durbin espacial y se debe contrastar `\(H_{0}: \rho=0\)`
+ - Si ésta última hipótesis es rechazada `\(\Longrightarrow\)` modelo Durbin espacial 
+ - Si ésta última hipótesis es no rechazada `\(\Longrightarrow\)` modelo SLX
+ 
+---
+# &lt;span style="font-size:80%"&gt;Regresión espacial&lt;/span&gt;
+&lt;spam style="font-size:130%"&gt;
+
+&lt;ins&gt;**&lt;span style="color:blue"&gt;Efectos directos e indirectos (o *spatial spillover effects)*&lt;/span&gt;**&lt;/ins&gt;
+
+- Muchos estudios empíricos usan las estimaciones puntuales de una o más especificaciones de modelos de regresión espacial ($\rho$, `\(\theta\)` y/o `\(\lambda\)`) para deducir conclusiones sobre la existencia de spillovers espaciales `\(\Longrightarrow\)` &lt;span style="color:blue"&gt;LeSage y Pace (2009, p. 74) plantean y demuestran que esta práctica lleva a erróneas conclusiones
+
+- Re-escribiendo el modelo *GNSM*:
+`$$\textbf{Y} = (\textbf{I}-\rho \textbf{W})^{-1}(\textbf{X}\boldsymbol\beta+\textbf{W}\textbf{X}\boldsymbol\theta) + \textbf{R}$$`
+donde `\(\textbf{R}\)` es un término que contiene el intercepto y el término de error, la matriz de derivadas parciales del valor esperado de `\(\textbf{Y}\)` con respecto a la `\(k\)`-ésima variable explicatoria de `\(\textbf{X}\)` es:
+
+`$$\left[ \begin{array}{ccc}
+\frac{\partial E(\textbf{Y})}{\partial x_{1k}} &amp;  . &amp; \frac{\partial E(Y)}{\partial x_{Nk}}\end{array} \right] = \left[ \begin{array}{ccc}
+\frac{\partial E(y_{1})}{\partial x_{1k}} &amp;  . &amp; \frac{\partial E(y_{1})}{\partial x_{Nk}}\\
+.                                         &amp;  . &amp; .                                        \\
+\frac{\partial E(y_{N})}{\partial x_{1k}} &amp;  . &amp; \frac{\partial E(y_{N})}{\partial x_{Nk}} \end{array} \right]=(\textbf{I}-\rho \textbf{W})^{-1} \left[ \begin{array}{cccc}
+\beta_{k}        &amp;  w_{12}\theta_{k} &amp; . &amp; w_{1N}\theta_{k}\\
+w_{21}\theta_{k} &amp;  \beta_{k}        &amp; . &amp; w_{2N}\theta_{k}\\
+.                &amp;       .           &amp; . &amp; .\\
+w_{N1}\theta_{k} &amp;  w_{N2}\theta_{k} &amp; . &amp; \beta_{k} \end{array} \right]$$`
+
+---
+# &lt;span style="font-size:80%"&gt;Regresión espacial&lt;/span&gt;
+&lt;spam style="font-size:115%"&gt;
+
+&lt;ins&gt;**&lt;span style="color:blue"&gt;Efectos directos e indirectos (o *spatial spillover effects)*&lt;/span&gt;**&lt;/ins&gt;
+
+Esta derivada parcial tiene tres importantes propiedades:
+1. Si una variable explicatoria particular en una unidad espacial particular cambia, no sólo cambiará la variable dependiente en esa unidad espacial, sino también cambiará en otras unidades espaciales
+ - El primer cambio se llama &lt;span style="color:blue"&gt;efecto directo&lt;/span&gt;: cada elemento de la diagonal
+&lt;p style="margin-bottom: -1em"&gt;
+ - El segundo cambio se llama &lt;span style="color:blue"&gt;efecto indirecto&lt;/span&gt;:  cada elemento por fuera de la diagonal  &lt;p style="margin-bottom: .5em"&gt;
+ Los efectos indirectos no ocurren si `\(\rho=0\)` y `\(\theta_{k}=0\)`, ya que los elementos por fuera de la diagonal serían cero
+
+2. Los efectos directos e indirectos son diferentes para diferentes unidades espaciales en la muestra
+&lt;p style="margin-bottom: -1em"&gt;
+ - Los efectos directos son diferentes ya que los elementos de la diagonal de la matriz `\((\textbf{I}-\rho \textbf{W})^{-1}\)` son diferentes para cada unidad espacial, siempre que `\(\rho\neq 0\)`
+ - Los efectos indirectos son diferentes ya que los elementos de la diagonal de la matriz `\((\textbf{I}-\rho \textbf{W})^{-1}\)` y de la matriz `\(\textbf{W}\)` son diferentes entre unidades espaciales, siempre que `\(\rho\neq 0\)` y/o `\(\theta_{k}\neq 0\)`
+	
+3. Los efectos indirectos que ocurren si `\(\theta_{k}\neq 0\)` son conocidos como &lt;span style="color:blue"&gt;efectos locales&lt;/span&gt;, como opuesto al efecto indirecto que ocurre si `\(\rho\neq 0\)` que son llamados &lt;span style="color:blue"&gt;efectos globales&lt;/span&gt;
+
+---
+# &lt;span style="font-size:80%"&gt;Regresión espacial&lt;/span&gt;
+&lt;spam style="font-size:115%"&gt;
+
+&lt;ins&gt;**&lt;span style="color:blue"&gt;Efectos directos e indirectos (o *spatial spillover effects)*&lt;/span&gt;**&lt;/ins&gt;
+
+- Ya que los efectos directos e indirectos son diferentes para diferentes unidades espaciales, la presentación de estos efectos puede ser problemático `\(\Longrightarrow\)` `\(N\)` unidades espaciales y `\(K\)` variables explicatorias, se obtiene `\(K\)` diferentes `\(N\times N\)` matrices de efectos directos e indirectos
+
+- LeSage y Pace (2009) proponen lo siguiente:
+&lt;p style="margin-bottom: -1em"&gt;
+ - &lt;span style="color:blue"&gt;Efectos directos&lt;/span&gt;: promedio de los elementos de la diagonal de la matriz
+ - &lt;span style="color:blue"&gt;Efectos indirectos&lt;/span&gt;: promedio de las filas o las columnas de los elementos por fuera de la diagonal
+
+- &lt;span style="color:blue"&gt;Promedio de las filas&lt;/span&gt;: el impacto sobre un particular unidad espacial de la variable dependiente ante un cambio en todas las variables explicatorias en todas las unidades espaciales
+
+- &lt;span style="color:blue"&gt;Promedio de las columnas&lt;/span&gt;: el impacto de cambiar la variable explicatoria en una unidad espacial sobre la variable dependiente de todas las unidades espaciales
+
+- &lt;span style="color:blue"&gt;Sin embargo, numéricamente las dos magnitudes son iguales, por lo cual no importa por cual se opte
+
+- &lt;span style="color:blue"&gt;Interpretación del efecto indirecto&lt;/span&gt;: el impacto de cambiar un particular elemento de una variable exógena sobre la variable dependiente de todas las otras unidades espaciales, lo cual corresponde al promedio del efecto columna
+
+---
+# &lt;span style="font-size:80%"&gt;Regresión espacial&lt;/span&gt;
+&lt;font size = "5"&gt;
+
+&lt;ins&gt;**&lt;span style="color:blue"&gt;Efectos directos e indirectos (o *spatial spillover effects)*&lt;/span&gt;**&lt;/ins&gt;
 
 
-El supuesto de independencia simplifica enormemente el modelo, pero puede ser difícil de justificar en algunos contextos... 
+&lt;img src="c2.png" width="73%" style="display: block; margin: auto;" /&gt;
 
+---
+name: r
+# &lt;span style="font-size:80%"&gt;Ejercicio aplicado en R&lt;/span&gt;
+&lt;font size = "5"&gt;
 
+En este ejercicio aplicado se va analizar los crímenes violentos en los estados de los Estados Unidos. En los siguientes links se encuentran los datos, el shapefile y el código utilizado en R: 
+
+- [Datos]()
+- [Shapefile]()
+- [Código en R]()
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

@@ -146,8 +146,7 @@ a, a > code {
 }
 /* Two-column layout */
 .left-column {
-  width: 20%;
-  height: 92%;
+  width: 33%;
   float: left;
 }
 .left-column h2, .left-column h3 {
@@ -157,9 +156,8 @@ a, a > code {
   color: #FFFFFF;
 }
 .right-column {
-  width: 75%;
+  width: 33%;
   float: right;
-  padding-top: 1em;
 }
 .pull-left {
   float: left;
