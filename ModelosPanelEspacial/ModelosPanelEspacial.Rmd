@@ -903,6 +903,6 @@ name: r
 
 En este ejercicio aplicado se va analizar los crímenes violentos en los estados de los Estados Unidos. En los siguientes links se encuentran los datos, el shapefile y el código utilizado en R: 
 
-- [Datos]()
-- [Shapefile]()
-- [Código en R]()
+- [Datos](https://gusgarciacruz.github.io/EconometriaAvanzada/ModelosPanelEspacial/crimes_ts.csv)
+- [Shapefile](https://gusgarciacruz.github.io/EconometriaAvanzada/ModelosPanelEspacial/cb_2018_us_state_5m.zip)
+- [Código en R](https://gusgarciacruz.github.io/EconometriaAvanzada/ModelosPanelEspacial/L4_2.R)
