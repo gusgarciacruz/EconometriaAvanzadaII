@@ -12,4 +12,7 @@ Profesor: [Gustavo A. García](https://gusgarciacruz.github.io/cv)
 
 [Estimación bajo exogeneidad secuencial](https://gusgarciacruz.github.io/EconometriaAvanzada/ExogeneidadSecuencial/ExogeneidadSecuencial.html)
 
+[Modelos espaciales en datos panel](https://gusgarciacruz.github.io/EconometriaAvanzada/ModelosPanelEspacial/ModelosPanelEspacial.html)
+
+
 [Trabajo de investigación](https://gusgarciacruz.github.io/EconometriaAvanzada/TrabajoInvestigacion/Researchwork2022-I.pdf)
