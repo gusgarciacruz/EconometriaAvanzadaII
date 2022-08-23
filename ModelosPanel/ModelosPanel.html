@@ -1,0 +1,1499 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Modelos lineales de datos panel</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Gustavo A. García   ggarci24@eafit.edu.co                  " />
+    <script src="libs/header-attrs-2.14/header-attrs.js"></script>
+    <script src="libs/fabric-4.3.1/fabric.min.js"></script>
+    <link href="libs/xaringanExtra-scribble-0.0.1/scribble.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra-scribble-0.0.1/scribble.js"></script>
+    <script>document.addEventListener('DOMContentLoaded', function() { window.xeScribble = new Scribble({"pen_color":["#FF0000"],"pen_size":3,"eraser_size":30,"palette":[]}) })</script>
+    <script src="libs/clipboard-2.0.6/clipboard.min.js"></script>
+    <link href="libs/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.js"></script>
+    <script>window.xaringanExtraClipboard(null, {"button":"<i class=\"fa fa-clipboard\"><\/i>","success":"<i class=\"fa fa-check\" style=\"color: #90BE6D\"><\/i>","error":"<i class=\"fa fa-times-circle\" style=\"color: #F94144\"><\/i>"})</script>
+    <link href="libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+    <link href="libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+    <link href="libs/xaringanExtra-extra-styles-0.2.6/xaringanExtra-extra-styles.css" rel="stylesheet" />
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# Modelos lineales de datos panel
+]
+.author[
+### Gustavo A. García <br> <span class="notbold" style="font-size:65%"><a href="mailto:ggarci24@eafit.edu.co" class="email">ggarci24@eafit.edu.co</a></span> <br> <br> <br> <br> <br> <br> <br> <br> <br>
+]
+.date[
+### <span class="notbold" style="font-size:65%">Econometría avanzada II<br> PhD/Maestría en Economía <br> Universidad EAFIT</span>
+]
+
+---
+
+
+
+
+&lt;style&gt;
+.notbold{
+    font-weight:normal
+}
+
+body {
+text-align: justify;
+}
+
+h1{
+      margin-top: -1px;
+      margin-bottom: -3px;
+}
+
+.small-code pre{
+  margin-bottom: -10px;
+  
+}  
+
+.medium-code pre{
+  margin-bottom: 2px;
+  
+}
+
+&lt;/style&gt;
+
+
+
+
+
+
+&lt;font size = "5"&gt;
+
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+
+Link slides en formato [html](https://gusgarciacruz.github.io/EconometriaAvanzadaII/ModelosPanel/ModelosPanel.html)
+
+Link slides en formato [PDF](https://gusgarciacruz.github.io/EconometriaAvanzadaII/ModelosPanel/ModelosPanel.pdf)
+
+---
+# &lt;span style="font-size:80%"&gt;En este tema&lt;/span&gt;
+
+- &lt;span style="font-size:150%"&gt;[&lt;span style="color:black"&gt;Motivación](#motivacion)&lt;/span&gt; &lt;br&gt; &lt;br&gt;
+
+- &lt;span style="font-size:150%"&gt;[&lt;span style="color:black"&gt;El problema de variables omitidas](#omitidas)&lt;/span&gt; &lt;br&gt; &lt;br&gt;
+
+- &lt;span style="font-size:150%"&gt;[&lt;span style="color:black"&gt;Algunas consideraciones](#consideraciones)&lt;/span&gt; &lt;br&gt; &lt;br&gt;
+
+- &lt;span style="font-size:150%"&gt;[&lt;span style="color:black"&gt;Naturaleza de los efectos inobservables](#naturaleza)&lt;/span&gt; &lt;br&gt; &lt;br&gt;
+
+- &lt;span style="font-size:150%"&gt;[&lt;span style="color:black"&gt;Estimando modelos de efectos inobservables](#estimando)&lt;/span&gt; &lt;br&gt; &lt;br&gt;
+
+- &lt;span style="font-size:150%"&gt;[&lt;span style="color:black"&gt;Test de Hausman](#hausman)&lt;/span&gt;&lt;br&gt; &lt;br&gt;
+
+- &lt;span style="font-size:150%"&gt;[&lt;span style="color:black"&gt;Qué dice Wooldridge entre RE y FE?](#wooldridge)&lt;/span&gt;&lt;br&gt; &lt;br&gt;
+
+- &lt;span style="font-size:150%"&gt;[&lt;span style="color:black"&gt;Ejercicio aplicado en R: determinantes de los salarios con un panel de datos](#ejercicio)&lt;/span&gt;
+
+---
+# &lt;span style="font-size:80%"&gt;Lecturas&lt;/span&gt;
+- &lt;span style="font-size:150%"&gt;Wooldridge, J. (2010). *Econometric Analysis of Cross Section and Panel Data*. 2a edición. MA: MIT Press. &lt;span style="color:blue"&gt;Cap 10 &lt;br&gt; &lt;br&gt;
+
+---
+name: motivacion
+# &lt;span style="font-size:80%"&gt;Motivación&lt;/span&gt;
+&lt;font size = "5"&gt;
+- El uso de métodos de regresión de datos de panel se ha vuelto cada vez más popular a medida que la disponibilidad de datos longitudinales ha aumentado 
+
+- Los datos panel contienen observaciones repetidas de series de tiempo `\((T)\)` para un gran número `\((N)\)` de unidades transversales (por ejemplo, individuos, hogares o empresas) 
+
+- Una importante ventaja de utilizar datos panel es que permiten a los investigadores controlar la heterogeneidad no observable, esto es, &lt;span style="color:blue"&gt;las diferencias sistemáticas entre las unidades de sección transversal&lt;/span&gt;
+
+- &lt;span style="color:blue"&gt;Omitiendo esta heterogeneidad no observable en los modelos de regresión que tiene parte temporal y transversal, la inferencia estadística podría ser sesgada&lt;/span&gt;
+
+---
+# &lt;span style="font-size:80%"&gt;Motivación&lt;/span&gt;
+&lt;font size = "5"&gt;
+
+- Cuando los datos de panel son disponibles, los &lt;span style="color:blue"&gt;modelos de error de componentes&lt;/span&gt; pueden ser usados para controla por estas diferencias individuales `\(\Longrightarrow\)` estos modelos asumen que el término de error estocástico tiene dos componentes:
+
+ - un efecto individual invariante en el tiempo que captura la heterogeneidad individual inobservable
+ - un término de error usual
+
+- Los efectos individuales invariantes en el tiempo son tratados como &lt;span style="color:blue"&gt;variables aleatorias&lt;/span&gt;, extraídas de la población junto con las variables explicativas, en oposición a la idea de parámetros a ser estimados
+
+- Bajo este marco, la cuestión clave es si el efecto individual no observado está o no correlacionado con las variables explicativas
+
+- Los modelos de datos panel también permiten mirar la &lt;span style="color:blue"&gt;dinámica de las relaciones&lt;/span&gt;, algo que no se puede en una sola sección cruzada
+
+---
+name: omitidas
+# &lt;span style="font-size:80%"&gt;El problema de variables omitidas&lt;/span&gt;
+&lt;font size = "5"&gt;
+
+&lt;spam style="font-size:90%"&gt;
+
+- Cuando existen variables omitidas en un modelo de regresión, la estructura de datos panel puede ser usada para obtener estimadores consistentes 
+
+- El interés es estimar el efecto parcial de las variables explicativas observables `\(x_j\)` sobre la variable dependiente `\(y\)`, esto es
+
+`$$E(y|x_1, x_2,...,x_K,c)$$`
+
+`\(c\)` es una variable aleatoria inobservable y nos gustará mantenerla constante cuando se obtienen los efectos parciales de las variables explicativas. &lt;span style="color:blue"&gt;Es importante resaltar que esta variable inobservable `\(c\)` es aleatoria y no un parámetro a estimar&lt;/span&gt;
+
+- Asumiendo un modelo lineal, se tiene
+
+`$$E(y|\textbf{x},c)=\beta_0 + \textbf{x}\pmb{\beta} + c$$`
+
+- Si `\(c\)` no se encuentra correlacionado con cada `\(x_j\)`, entonces `\(c\)` será otro factor inobservable afectando `\(y\)` y cuyo efecto es de interés
+
+- Si `\(Cov(x_j,c)\neq0\)` para alguna `\(j\)`, poniendo `\(c\)` en el término de error puede causar problemas y estimar inconsistentemente a `\(\pmb{\beta}_{K\times1}\)`
+
+---
+# &lt;span style="font-size:80%"&gt;El problema de variables omitidas&lt;/span&gt;
+&lt;font size = "5"&gt;
+
+- Cuando se tiene panel de datos es posible lidiar con `\(Cov(\textbf{x},c)\neq\textbf{0}\)`
+
+- Por ejemplo, supongamos que observamos `\(y\)` y `\(\textbf{x}\)` en dos periodo, con lo cual tenemos `\(y_t\)` y `\(\textbf{x}_t\)`, y se supone que `\(c\)` no varia en le tiempo, entonces el modelo será
+
+`$$E(y_t | \textbf{x}_t, c)=\beta_0 + \textbf{x}_t\pmb{\beta} + c, t=1,2$$`
+- `\(c\)` entonces es un &lt;span style="color:blue"&gt;efecto inobservable&lt;/span&gt; al tener el mismo efecto sobre `\(y\)` en cada periodo y ser constante a través del tiempo
+
+- Este efecto inobservable es a menudo interpretado como características individuales inobservables, como habilidades cognitivas, motivación o educación familiar temprana
+
+---
+# &lt;span style="font-size:80%"&gt;El problema de variables omitidas&lt;/span&gt;
+&lt;font size = "5"&gt;
+
+Surge entonces un supuesto adicional para estimar `\(\pmb{\beta}\)`. Reecribiendo el modelo tenemos
+
+`$$y_t = \beta_0 + \textbf{x}_t\pmb{\beta} + c + u_t$$`
+donde por definición el supuesto de &lt;span style="color:blue"&gt;estricta exogeneidad&lt;/span&gt; de las variables explicativas indica
+
+`$$E(u_t|\textbf{x}_t,c)=0, t=1,2$$`
+Lo que implica que
+
+`$$E(\textbf{x}_t^{'}u_t)=\textbf{0}, t=1,2$$`
+Dos consideraciones para estimar el model
+
+- si se asume que `\(E(\textbf{x}_t^{'}c)=\textbf{0}\)`, se podrá aplicar *pooled OLS*
+
+- si `\(c\)` está correlacionado con cualquier elemento de `\(\textbf{x}_t\)`, entonces *pooled OLS* es sesgado e inconsistente `\(\Longrightarrow\)` &lt;span style="color:blue"&gt;es necesario métodos de estimación para eliminar el componente inobservable que es constante a tráves del tiempo, `\(c\)`: modelo en diferencias o el estimador *within*&lt;/span&gt;
+
+---
+name: consideraciones
+# &lt;span style="font-size:80%"&gt;Algunas consideraciones&lt;/span&gt;
+&lt;font size = "5"&gt;
+
+- Se asume un &lt;span style="color:blue"&gt;panel balanceado&lt;/span&gt;: se tiene el mismo número de periodos en cada unidad de corte transversal. En paneles no-balanceados se debe tener cuidado el sesgo de selección y el *attrition*
+
+- Nos centramos en las propiedades asintóticas de los estimadores, por tanto &lt;span style="color:blue"&gt; `\(T\)` es fijo y `\(N\)` crece sin límite&lt;/span&gt;, así &lt;span style="color:blue"&gt; `\(N \geq T\)`&lt;/span&gt;. Con un `\(N\)` grande es posible ver a las observaciones de seccón cruzada como independientes, idénticamente distribuidas tomadas de la población
+
+---
+name: naturaleza
+# &lt;span style="font-size:80%"&gt;Naturaleza de los efectos inobservables&lt;/span&gt;
+&lt;font size = "5"&gt;
+
+Surge entonces una primera inquietud sobre la naturaleza de los efectos inobservables: &lt;span style="color:blue"&gt;efectos fijos o aleatorios?&lt;/span&gt;
+
+El modelo de efectos inobservables puede plantearse de la siguiente forma
+
+`$$y_{it} = \textbf{x}_{it}\pmb{\beta} + c_i + u_{it}, t=1,2,...,T$$`
+
+`\(c_i\)` entonces representa el &lt;span style="color:blue"&gt;efecto individual&lt;/span&gt; o la &lt;span style="color:blue"&gt;heterogeneidad individual&lt;/span&gt;
+
+La discusión entonces se centra en saber si `\(c_i\)` es tratado como un efecto aleatorio o como un efecto fijo `\(\Longrightarrow\)` &lt;span style="color:blue"&gt;es una variable aleatoria o un parámetro a ser estimado&lt;/span&gt;
+
+Bajo este enfoque, lo principal es saber si `\(c_i\)` está o no correlacionado con las variables explicativas `\(\textbf{x}_{it}\)`
+ 
+---
+# &lt;span style="font-size:80%"&gt;Naturaleza de los efectos inobservables&lt;/span&gt;
+&lt;font size = "5"&gt;
+&lt;p style="margin-bottom: -1em"&gt;
+&lt;span style="color:blue"&gt;Efectos aleatorios&lt;/span&gt;
+
+- `\(Cov(\textbf{x}_{it},c_i)=\textbf{0}\)`
+- En la literatura cuando `\(c_i\)` es referenciado como &lt;span style="color:blue"&gt;efecto aleatorio individual&lt;/span&gt; se está asumiendo que no se encuentra correlacionado con `\(\textbf{x}_{it}\)` 
+
+&lt;p style="margin-bottom: -1em"&gt;
+&lt;span style="color:blue"&gt;Efectos fijos&lt;/span&gt;
+
+- `\(Cov(\textbf{x}_{it},c_i)\neq\textbf{0}\)`
+- En este caso `\(c_i\)` es llamado &lt;span style="color:blue"&gt;efecto fijo individual&lt;/span&gt;
+
+---
+name: estimando
+# &lt;span style="font-size:80%"&gt;Estimando modelos de efectos inobservables&lt;/span&gt;
+&lt;font size = "5"&gt;
+
+&lt;spam style="line-height: 2em;"&gt;
+
+- *Pooled OLS*
+- Modelo de efectos aleatorios
+- Modelo de efectos fijos
+- Modelo de variables dummy
+
+---
+# &lt;span style="font-size:80%"&gt;Estimando modelos de efectos inobservables&lt;/span&gt;
+&lt;spam style="font-size:115%"&gt;
+
+**&lt;span style="color:blue"&gt;&lt;ins&gt; Pooled OLS&lt;/ins&gt; &lt;/span&gt;** 
+
+Bajo ciertos supuestos, el estimador *Pooled OLS* puede ser usado para obtener estimadores consistentes de `\(\pmb{\beta}\)`. Reescribiendo el modelo
+
+`$$y_{it} = \textbf{x}_{it}\pmb{\beta} + \upsilon_{it}$$`
+donde `\(\upsilon_{it}=c_i + u_{it}\)`, es lo que se llama &lt;span style="color:blue"&gt;los errores compuestos&lt;/span&gt;, que es la suma del efecto inobservable y un error idiosincrático
+
+La estimación *Pooled OLS* es consistente si &lt;span style="color:blue"&gt; `\(E(\textbf{x}_{it}^{'}\upsilon_{it})=\textbf{0}\)`&lt;/span&gt;, es decir si
+&lt;p style="margin-bottom: -1em"&gt;
+&lt;span style="color:blue"&gt; `$$E(\textbf{x}_{it}^{'}u_{it})=\textbf{0}$$`&lt;/span&gt;
+
+&lt;span style="color:blue"&gt; `$$E(\textbf{x}_{it}^{'}c_{i})=\textbf{0}$$`&lt;/span&gt;
+
+Si los anteriores supuestos se cumplen, los errores compuestos serán serialmente correlacionados debido a la presencia de `\(c_i\)` en cada periodo de tiempo. Por tanto, la inferencia usando *Pooled OLS* requiere un estimador robusto de la matriz de varianzas y tests estadísticos robustos
+
+Es importante tener un `\(N\)` grande y un `\(T\)` fijo cuando se utilice *Pooled OLS*, para evitar que la correlación serial afecte las estimaciones
+
+---
+# &lt;span style="font-size:80%"&gt;Estimando modelos de efectos inobservables&lt;/span&gt;
+
+&lt;spam style="font-size:100%"&gt;
+
+**&lt;span style="color:blue"&gt;&lt;ins&gt;Modelo de efectos aleatorios&lt;/ins&gt; &lt;/span&gt;**
+
+Como en el caso de *Pooled OLS*, un análisis de efectos aleatorios pone a `\(c_i\)` en el término de error. Se imponen más supuestos que en el caso de *Pooled OLS*
+&lt;p style="margin-bottom: -1em"&gt;
+**&lt;span style="color:blue"&gt;Supuesto RE.1&lt;/span&gt;**:
+
+- &lt;span style="color:blue"&gt; `\(E(u_{it}|\textbf{x}_{i},c_i)=0\)`&lt;/span&gt; `\(\Longrightarrow\)` exogeneidad estricta ( `\(\Longrightarrow\)` `\(E(c_i u_{it})=0\)`, `\(E(\textbf{x}_{it}^{'} u_{it})=0\)`)
+&lt;p style="margin-bottom: -1em"&gt;
+- &lt;span style="color:blue"&gt; `\(E(c_{i}|\textbf{x}_{i})=E(c_{i})=0\)`&lt;/span&gt; `\(\Longrightarrow\)` ortogonalidad entre `\(c_i\)` y cada `\(\textbf{x}_{it}\)`
+
+La superioridad de un enfoque de efectos aleatorios sobre *Pooled OLS*, es que el primero tiene en cuenta la correlación serial en los errores compuestos, `\(\upsilon_{it}=c_i + u_{it}\)`, en un marco de &lt;span style="color:blue"&gt;mínimos cuadrados generalizados (GLS)&lt;/span&gt;
+
+Escribiendo el modelo para todo `\(T\)` como
+
+`$$\textbf{y}_i = \textbf{X}_i\pmb{\beta}+\textbf{v}_i$$`
+`\(\textbf{v}_i = c_i \textbf{j}_T + \textbf{u}_i\)`, donde `\(\textbf{j}_T\)` es un vector de unos de `\(T\times 1\)`
+
+La matriz de varianza de `\(\textbf{v}_i\)` es
+
+`$$\pmb{\Omega}=E(\textbf{v}_i\textbf{v}_i^{'})_{T\times T}$$`
+Para consistencia de los GLS, es necesario la usual condición de rango para GLS
+
+&lt;center&gt;
+**&lt;span style="color:blue"&gt;Supuesto RE.2&lt;/span&gt;**: &lt;span style="color:blue"&gt;rango `\(E(\textbf{X}_i^{'}\pmb{\Omega}^{-1}\textbf{X}_i)=K\)`&lt;/span&gt;
+
+---
+# &lt;span style="font-size:80%"&gt;Estimando modelos de efectos inobservables&lt;/span&gt;
+
+&lt;spam style="font-size:100%"&gt;
+
+**&lt;span style="color:blue"&gt;&lt;ins&gt;Modelo de efectos aleatorios&lt;/ins&gt; &lt;/span&gt;**
+
+Un análisis general de mínimos cuadrados generalizados factibles (FGLS), usando un estimador de `\(\pmb{\Omega}\)` es consistente y asintóticamente normal cuando `\(N\rightarrow\infty\)`
+
+Hasta este punto no se está explotando la estructura de efectos inobservables de `\(\upsilon_{it}\)`, así que es necesario adicionar supuestos sobre el error idiosincrático que da a `\(\pmb{\Omega}\)` una forma especial. Los supuestos son
+
+- &lt;span style="color:blue"&gt; `\(E(u_{it}^2)=\sigma_u^2\)`&lt;/span&gt; `\(\Longrightarrow\)` Homoscedaticidad
+&lt;p style="margin-bottom: -1em"&gt;
+- &lt;span style="color:blue"&gt; `\(E(u_{it}u_{is})=0\)`&lt;/span&gt; `\(\Longrightarrow\)` No autocorrelación 
+
+Bajo estos supuestos ya es posible construir la matriz de varianzas y covarianzas de `\(\textbf{v}_i\)` `\((\pmb{\Omega})\)`
+&lt;p style="margin-bottom: -1em"&gt;
+Varianza: `\(E(\upsilon_{it}^2)=\sigma_c^2 + \sigma_u^2\)`
+
+Covarianza `\((t\neq s)\)`: `\(E(\upsilon_{it}^2\upsilon_{is}^2)=\sigma_c^2\)`
+
+`$$\pmb{\Omega} = E(\textbf{v}_i\textbf{v}_i^{'})= \left[ \begin{array}{cccc}
+\sigma_c^2 + \sigma_u^2 &amp; \sigma_c^2 &amp; \ldots &amp; \sigma_c^2 \\
+\sigma_c^2              &amp; \sigma_c^2 + \sigma_u^2 &amp; \ldots &amp; \vdots\\
+\vdots                  &amp;                         &amp; \ddots &amp; \sigma_c^2\\
+\sigma_c^2              &amp;                         &amp;        &amp; \sigma_c^2 + \sigma_u^2 \end{array} \right]_{T\times T} = \sigma_u^2 \textbf{I}_T + \sigma_c^2 \textbf{j}_T \textbf{j}_T^{'}$$`
+
+---
+# &lt;span style="font-size:80%"&gt;Estimando modelos de efectos inobservables&lt;/span&gt;
+&lt;spam style="font-size:100%"&gt;
+
+**&lt;span style="color:blue"&gt;&lt;ins&gt;Modelo de efectos aleatorios&lt;/ins&gt; &lt;/span&gt;**
+
+La correlación entre `\(\upsilon_{is}\)` y `\(\upsilon_{it}\)` es
+
+`$$Corr(\upsilon_{is},\upsilon_{it})=\frac{\sigma_c^2}{\sigma_c^2 + \sigma_u^2}\geq 0$$`
+Esta correlación es también el ratio de la varianza de `\(c_i\)` a la varianza del error compuesto, y es útil como &lt;span style="color:blue"&gt;una medida de la importancia relativa del efecto inobservable `\(c_i\)`&lt;/span&gt;
+
+Un tercer supuesto que surge es
+
+&lt;p style="margin-bottom: -1em"&gt;
+**&lt;span style="color:blue"&gt;Supuesto RE.3&lt;/span&gt;**:
+
+- &lt;span style="color:blue"&gt; `\(E(\textbf{u}_{i}\textbf{u}_{i}^{'}|\textbf{x}_{it},c_i)=\sigma_{u}^{2}\textbf{I}_T\)`
+- &lt;span style="color:blue"&gt; `\(E(c_{i}^{2}|\textbf{x}_{i})=\sigma_{c}^{2}\)`&lt;/span&gt;
+
+El primer supuesto es más fuerte que el supuesto visto de `\(e(u_{it}^{2})=\sigma_{u}^{2}\)` de homoscedasticidad, ya que asume que &lt;span style="color:blue"&gt;las varianzas condicionales son constantes y las covarianzas condicionales son cero&lt;/span&gt;
+
+El segundo supuesto plantea que la `\(Var(c_{i}|\textbf{x}_{i})=Var(c_{i})\)`, que es el &lt;span style="color:blue"&gt;supuesto de homoscedasticidad sobre el efecto inobservable `\(c_i\)`&lt;/span&gt;
+
+---
+# &lt;span style="font-size:80%"&gt;Estimando modelos de efectos inobservables&lt;/span&gt;
+&lt;spam style="font-size:100%"&gt;
+
+**&lt;span style="color:blue"&gt;&lt;ins&gt;Modelo de efectos aleatorios&lt;/ins&gt; &lt;/span&gt;**
+
+Asumiendo que se tienen estimadores consistentes de `\(\sigma_c^2\)` y `\(\sigma_u^2\)`, se tendrá un estimador para `\(\pmb{\Omega}\)`
+
+
+`$$\pmb{\widehat{\Omega}} = \widehat{\sigma}_u^2\textbf{I}_T + \widehat{\sigma}_c^{2}\textbf{j}_T \textbf{j}_{T}^{'}$$`
+El estimador FGLS que usa la anterior matriz de varianza es conocido como el &lt;span style="color:blue"&gt;estimador de efectos aleatorios&lt;/span&gt;
+
+&lt;span style="color:blue"&gt; `$$\pmb{\widehat{\beta}}_{RE} =\left(\sum_{i=1}^{N}\textbf{X}_{i}^{'}\pmb{\widehat{\Omega}}^{-1}\textbf{X}_{i} \right)^{-1} \left(\sum_{i=1}^{N}\textbf{X}_{i}^{'}\pmb{\widehat{\Omega}}^{-1}\textbf{y}_i \right)$$`&lt;/span&gt;
+
+&lt;spam style="line-height: 3em;"&gt;
+
+- `\(\pmb{\widehat{\beta}}_{RE}\)` es claramente motivado por el supuesto RE.3
+- `\(\pmb{\widehat{\beta}}_{RE}\)` es consistente si se cumple o no el supuesto RE.3
+- Si los supuestos RE.1 y RE.2 se cumplen, `\(\pmb{\widehat{\beta}}_{RE} \xrightarrow{p} \pmb{\beta}\)` cuando `\(N\rightarrow\infty\)`
+- Bajo el supuesto RE.3, `\(\pmb{\widehat{\beta}}_{RE}\)` es eficiente
+
+---
+# &lt;span style="font-size:80%"&gt;Estimando modelos de efectos inobservables&lt;/span&gt;
+&lt;spam style="font-size:100%"&gt;
+
+**&lt;span style="color:blue"&gt;&lt;ins&gt;Modelo de efectos aleatorios&lt;/ins&gt; &lt;/span&gt;**
+
+Con el fin de implementar el procedimiento de efectos aleatorios, es necesario obtener `\(\widehat{\sigma}_{c}^{2}\)` y `\(\widehat{\sigma}_{u}^{2}\)`. Sin embargo, una estrategia más fácil es encontrar un estimador para `\(\sigma_{\upsilon}^{2}\)`, así que un estimador consistente es
+
+`$$\widehat{\sigma}_{\upsilon}^{2} = \frac{1}{(NT-K)}\sum_{i=1}^{N}\sum_{t=1}^{T} \widehat{\widehat{\upsilon}}_{it}^{2}$$`
+
+donde `\(\widehat{\widehat{\upsilon}}_{it}^{2}\)` son los residuales del *Pooled OLS*
+
+Un estimador consistente para `\(\sigma_{c}^{2}\)` es
+`$$\widehat{\sigma}_{c}^{2} = \frac{1}{[NT(T-1)/2-K]}\sum_{i=1}^{N}\sum_{t=1}^{T-1}\sum_{s=t+1}^{T} \widehat{\widehat{\upsilon}}_{it}^{2}\widehat{\widehat{\upsilon}}_{is}^{2}$$`
+
+Dado `\(\widehat{\sigma}_{\upsilon}^{2}\)` y `\(\widehat{\sigma}_{c}^{2}\)` se puede calcular `\(\widehat{\sigma}_{u}^{2}=\widehat{\sigma}_{\upsilon}^{2}-\widehat{\sigma}_{c}^{2}\)`
+
+---
+# &lt;span style="font-size:80%"&gt;Estimando modelos de efectos inobservables&lt;/span&gt;
+&lt;spam style="font-size:100%"&gt;
+
+**&lt;span style="color:blue"&gt;&lt;ins&gt;Modelo de efectos aleatorios&lt;/ins&gt; &lt;/span&gt;**
+&lt;p style="margin-bottom: 1em"&gt;
+- `\(\widehat{\sigma}_{c}^{2}\)` puede ser negativo, aunque en la mayorí de los ejercicios empíricos tiende a ser positivo. Implicaciones que sea negativo
+&lt;p style="margin-bottom: -1em"&gt;
+
+ - correlación negativa en `\(u_{it}\)`, lo que significa que el primer supuesto en RE.3 se viola
+
+ - otros supuestos también pueden ser violados
+
+ - se deben incluir variables dummies de tiempo en el modelo si son significativas, su omisión puede llevar a correlación serial en `\(u_{it}\)`
+
+ - FGLS no restringido puede ser utilizado
+
+&lt;p style="margin-bottom: 2em"&gt;
+- Probando por la existencia de efectos inobservables
+&lt;p style="margin-bottom: -1em"&gt;
+ - Si los supuestos del modelo de efectos aleatorios (RE.1-RE.3) se cumplen pero modelo contiene un efecto inobservable, el *Pooled OLS* es más eficiente
+
+ - `\(H_0\)`: `\(\sigma_{c}^{2}=0\)` vs `\(H_a\)`: `\(\sigma_{c}^{2}\neq 0\)`
+
+ - Si no rechazamos H$_0$ se concluye que efectos aleatorios no es apropiado. Esto es, no existe evidencia de diferencias significativas a través de las unidades de corte transversal, por tanto se puede correr un *Pooled OLS*
+
+ - Existen dos test: &lt;span style="color:blue"&gt;Breusch-Pagan (1980)&lt;/span&gt; y &lt;span style="color:blue"&gt;Wooldridge (2010)&lt;/span&gt;
+ 
+---
+# &lt;span style="font-size:80%"&gt;Estimando modelos de efectos inobservables&lt;/span&gt;
+&lt;spam style="font-size:100%"&gt;
+
+**&lt;span style="color:blue"&gt;&lt;ins&gt;Modelo de efectos fijos&lt;/ins&gt; &lt;/span&gt;**
+- En muchas aplicaciones el punto central al usar panel de datos es permitir que `\(c_i\)` este correlacionado con `\(\textbf{x}_{it}\)` y el modelo de efectos fijos permite esto
+
+- El modelo de efectos fijos se escribe como
+`$$\textbf{y}_i = \textbf{X}_i \pmb{\beta} + c_i \textbf{j}_T + \textbf{u}_i$$`
+donde `\(\textbf{j}_T\)` es un vector de unos de `\(T \times 1\)`
+
+
+- El primer supuesto del modelo de efectos fijos es
+&lt;p style="margin-bottom: -0.8em"&gt;
+&lt;p style="margin-bottom: -1em"&gt;
+**&lt;span style="color:blue"&gt;Supuesto FE.1&lt;/span&gt;**   
+&lt;span style="color:blue"&gt; `\(E(u_{it}|\textbf{x}_{i},c_i)=0\)`&lt;/span&gt; `\(\Longrightarrow\)` exogeneidad estricta `\((\Longrightarrow E(c_i u_{it})=0, E(\textbf{x}_{it}^{'} u_{it})=0)\)`
+
+&lt;p style="margin-bottom: 2em"&gt;
+- Note que FE.1 es similar a RE.1, pero en el primero no se incluye el supuesto que `\(E(c_i|\textbf{x}_i)\)`=0. Relajando este último supuesto (presencia de variable omitidas invariantes en el tiempo que se encuentran relacionadas con `\(\textbf{x}_{it}\)`) se puede estimar consistentemente `\(\pmb{\beta}\)`
+
+- Entonces FE es más robusto que RE. Sin embargo, esta ventaja de FE tiene un costo: &lt;span style="color:blue"&gt;no se pueden incluir factores invariantes en el tiempo en `\(\textbf{x}_{it}\)`&lt;/span&gt; (género o raza)
+
+---
+# &lt;span style="font-size:80%"&gt;Estimando modelos de efectos inobservables&lt;/span&gt;
+&lt;spam style="font-size:100%"&gt;
+
+**&lt;span style="color:blue"&gt;&lt;ins&gt;Modelo de efectos fijos&lt;/ins&gt; &lt;/span&gt;**
+
+Para estimar `\(\pmb{\beta}\)` bajo el supuesto FE.1 se debe transformar la ecuación para eliminar el efecto inobservable `\(c_i\)` `\(\Longrightarrow\)` &lt;span style="color:blue"&gt;la transformación *within*&lt;/span&gt; permite tal eliminación
+
+&lt;span style="color:blue"&gt;La transformation *within*&lt;/span&gt;
+
+- Promedie la ecuación `\(y_{it} = \textbf{x}_{it} \pmb{\beta} + c_i + u_{it}\)` sobre `\(t=1,...,T\)` para obtener la ecuación de sección cruzada
+
+`$$\overline{y}_{i} = \overline{\textbf{x}}_{i} \pmb{\beta} + c_i + \overline{u}_{i}$$`
+donde `\(\overline{y}_{i} = T^{-1} \sum_{t=1}^T y_{it}\)`, `\(\overline{\textbf{x}}_{i} = T^{-1} \sum_{t=1}^T \textbf{x}_{it}\)` y `\(\overline{u}_{i} = T^{-1} \sum_{t=1}^T u_{it}\)`
+	
+- Restando el modelo original con este anterior en medias
+
+&lt;span style="color:blue"&gt; `$$y_{it} - \overline{y}_{i} = (\textbf{x}_{it} - \overline{\textbf{x}}_{i})\pmb{\beta} + u_{it} - \overline{u}_{i}$$`&lt;/span&gt;
+
+o lo que es lo mismo
+
+&lt;span style="color:blue"&gt; `$$\ddot{y}_{it} = \ddot{\textbf{x}}_{it}\pmb{\beta} + \ddot{u}_{it}$$`&lt;/span&gt;
+
+Se observa que el efecto inobservable `\(c_i\)` se ha eliminado
+
+La anterior ecuación podría ser estimada por *Pooled OLS*, sin embargo, es necesario determinar si en este modelo se cumple el supuesto `\(E(\ddot{\textbf{x}}_{it}' \ddot{u}_{it})=\textbf{0}\)` para obtener estimadores consistentes
+
+---
+# &lt;span style="font-size:80%"&gt;Estimando modelos de efectos inobservables&lt;/span&gt;
+&lt;spam style="font-size:100%"&gt;
+
+**&lt;span style="color:blue"&gt;&lt;ins&gt;Modelo de efectos fijos&lt;/ins&gt; &lt;/span&gt;**
+
+Entonces la pregunta es: &lt;span style="color:blue"&gt;¿Es posible aplicar OLS al modelo *within* y obtener estimadores consistentes?&lt;/span&gt;
+
+En otras palabras &lt;span style="color:blue"&gt;¿se mantiene el supuesto `\(E(\ddot{\textbf{x}}_{it}' \ddot{u}_{it})=\textbf{0}\)` bajo el supuesto FE.1, con lo cual es posible aplicar OLS al modelo *within* y obtener estimadores consistentes?&lt;/span&gt;
+
+`$$E(\ddot{\textbf{x}}_{it}' \ddot{u}_{it})= E[(\textbf{x}_{it} - \overline{\textbf{x}}_{i})^{'}(\textbf{u}_{it} - \overline{\textbf{u}}_{i})]$$`
+&lt;p style="margin-bottom: -1em"&gt;
+Bajo el supuesto FE.1 `\(E(u_{it} | \textbf{x}_{it},c_i) = 0\)` se tiene que
+
+&lt;p style="margin-bottom: -0.8em"&gt;
+`$$E(\textbf{x}_{it}^{'}\textbf{u}_{it})=0$$`
+&lt;p style="margin-bottom: -0.8em"&gt;
+`$$E(\textbf{x}_{it}^{'}\overline{\textbf{u}}_{i})=0$$`
+
+&lt;p style="margin-bottom: -0.8em"&gt;
+`$$E(\overline{\textbf{x}}_{i}^{'}\textbf{u}_{it})=0$$`
+&lt;p style="margin-bottom: -0.8em"&gt;
+`$$E(\overline{\textbf{x}}_{i}^{'}\overline{\textbf{u}}_{i})=0$$`
+Con lo cual
+
+`$$E(\ddot{\textbf{x}}_{it}' \ddot{u}_{it})= E[(\textbf{x}_{it} - \overline{\textbf{x}}_{i})^{'}(\textbf{u}_{it} - \overline{\textbf{u}}_{i})]=0$$`
+
+&lt;span style="color:blue"&gt;Entonces aplicar OLS al modelo *within* genera estimadores consistentes de `\(\pmb{\beta}\)`&lt;/span&gt;
+
+---
+# &lt;span style="font-size:80%"&gt;Estimando modelos de efectos inobservables&lt;/span&gt;
+&lt;spam style="font-size:100%"&gt;
+
+**&lt;span style="color:blue"&gt;&lt;ins&gt;Modelo de efectos fijos&lt;/ins&gt; &lt;/span&gt;**
+
+De lo anterior hay otras dos implicaciones
+- `\(E(\ddot{u}_{it} | \textbf{x}_i) = E(u_{it} | \textbf{x}_i) - E(\overline{u}_{i} | \textbf{x}_i) = 0\)`
+- `\(E(\ddot{u}_{it} | \ddot{\textbf{x}}_{i1},...,\ddot{\textbf{x}}_{iT}) = 0\)`
+
+&lt;span style="color:blue"&gt;Lo que implica que `\(\ddot{\textbf{x}}_{it}\)` satisface la condición de exogeneidad estrictia y el estimador de efectos fijos o *within* de `\(\pmb{\beta}\)` será insesgado bajo el supuesto FE.1&lt;/span&gt;
+
+En resumen el &lt;span style="color:blue"&gt;estimador de efectos fijos (FE)&lt;/span&gt; `\(\pmb{\beta}_{FE}\)` es el estimador *Pooled OLS* de la regresión
+
+`$$\ddot{y}_{it} = \ddot{\textbf{x}}_{it}\pmb{\beta} + \ddot{u}_{it}$$`
+
+Con el fin de asegurar que el estimador FE tenga un buen comportamiento en términos asintóticos, es necesario la condición rango esténdar sobre la matriz de variables explicatorias descontando la parte temporal, esto es
+
+&lt;center&gt;
+**&lt;span style="color:blue"&gt;Supuesto FE.2&lt;/span&gt;**: &lt;span style="color:blue"&gt;rango `\(\sum_{t=1}^T E(\ddot{\textbf{x}}_{it}^{'}\ddot{\textbf{x}}_{it})=\)` rango `\(E(\ddot{\textbf{X}}_i^{'}\ddot{\textbf{X}}_i)=K\)`
+
+---
+# &lt;span style="font-size:80%"&gt;Estimando modelos de efectos inobservables&lt;/span&gt;
+&lt;spam style="font-size:100%"&gt;
+
+**&lt;span style="color:blue"&gt;&lt;ins&gt;Modelo de efectos fijos&lt;/ins&gt; &lt;/span&gt;**
+
+El estimador de efectos fijos o estimador *within* (usa la variación temporal entre cada unidad de corte transversal) puede expresarse como
+
+`$$\pmb{\beta}_{FE} = \left(\sum_{i=1}^{N}\sum_{t=1}^{T} \ddot{\textbf{x}}_{it}^{'}\ddot{\textbf{x}}_{it}\right)^{-1} \left(\sum_{i=1}^{N}\sum_{t=1}^{T}\ddot{\textbf{x}}_{it}^{'}\ddot{\textbf{y}}_{it} \right)$$`
+El siguiente supuesto asegura que el anterior estimador sea eficiente
+
+&lt;center&gt;
+**&lt;span style="color:blue"&gt;Supuesto FE.3&lt;/span&gt;**: &lt;span style="color:blue"&gt; `\(E(\textbf{u}_{i}\textbf{u}_{i}^{'}|\textbf{x}_i , c_i)=\sigma_u^2\textbf{I}_T\)`&lt;/span&gt;
+
+---
+# &lt;span style="font-size:80%"&gt;Estimando modelos de efectos inobservables&lt;/span&gt;
+&lt;spam style="font-size:100%"&gt;
+
+**&lt;span style="color:blue"&gt;&lt;ins&gt;Modelo de variables *dummy*&lt;/ins&gt; &lt;/span&gt;**
+
+- Hasta ahora se ha visto a `\(c_i\)` como una variable aleatoria inobservada. Sin embargo, en enfoques tradicionales `\(c_i\)` es un parámetro a estimar junto con `\(\pmb{\beta}\)`. La pregunta que surge entonces es cómo estimar `\(c_i\)`?
+
+- Una posibilidad es definir `\(N\)` variables *dummy*, una para cada para unidad de sección cruzada: `\(d_i=1\)` si `\(n=i\)`, `\(d_i=0\)` si `\(n\neq i\)` y estimar una regresión *Pooled OLS* de la forma
+		
+`$$y_{it} = d_i + \textbf{x}_{it}\pmb{\beta} + u_{it}$$`
+Entonces, por ejemplo, `\(\widehat{c}_1\)` es el coeficiente de `\(d_1\)`, y así se estiman los `\(c_i\)`. Recordar evitar la tramapa de las variables dummy excluyendo una `\(d_i\)`
+
+---
+name: hausman
+# &lt;span style="font-size:80%"&gt;Test de Hausman (1978)&lt;/span&gt;
+
+La principal consideración para seleccionar entre el modelo de efectos aleatorios y el modelo de efectos fijos es determinar si `\(c_i\)` y `\(\textbf{x}_{it}\)` están correlacionados `\(\Longrightarrow\)` El &lt;span style="color:blue"&gt;test de Hausman&lt;/span&gt; proporciona esta prueba entre estos dos modelos
+
+La idea del test de Hausman es que, FE es consistente cuando `\(c_i\)` y `\(\textbf{x}_{it}\)` están correlacionados, pero RE es incosistente, así que &lt;span style="color:blue"&gt;si existe una diferencia estadísticamente significativa entre FE y RE es evidencia en contra del supuesto RE.1 `\(E(c_i|\textbf{x}_{it})=0\)`&lt;/span&gt;
+
+El estadístico de Hausman tiene la siguiente forma
+
+`$$H = (\widehat{\pmb{\delta}}_{FE} - \widehat{\pmb{\delta}}_{RE})^{'} [Av\widehat{a}r(\widehat{\pmb{\delta}}_{FE}) - Av\widehat{a}r(\widehat{\pmb{\delta}}_{RE})]^{-1} (\widehat{\pmb{\delta}}_{FE} - \widehat{\pmb{\delta}}_{RE}) \sim \chi_{M}^{2}$$`
+donde `\(\widehat{\pmb{\delta}}_{FE}\)` es el vector de estimaciones del modelo de efectos fijos, `\(\widehat{\pmb{\delta}}_{RE}\)` son las estimaciones del modelo de efectos aleatorios (ambos de `\(M \times 1\)`) y `\(Av\widehat{a}r(\widehat{\pmb{\delta}}_{FE})\)` y `\(Av\widehat{a}r(\widehat{\pmb{\delta}}_{RE})\)` son las varianzas asintóticas de los estimadores para cada modelo
+
+&lt;center&gt;
+`\(H_0\)`: RE `\((Cov(c_i,\textbf{x}_{it})=0)\)`
+
+`\(H_a\)`: FE `\((Cov(c_i,\textbf{x}_{it})\neq 0)\)`
+
+---
+name: wooldridge 
+# &lt;span style="font-size:80%"&gt;Qué dice Wooldridge entre RE y FE?&lt;/span&gt;
+
+&lt;img src="Wooldridge.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+[Link al tweet](https://twitter.com/jmwooldridge/status/1365746478183047172)
+
+---
+name: ejercicio
+# &lt;span style="font-size:70%"&gt;Ejercicio aplicado en R: determinantes de los salarios con un panel de datos&lt;/span&gt;
+
+En este ejercicio vamos a estudiar los derterminantes de los salarios teniendo en cuenta la heterogeneidad inobservable.
+
+Los datos para este ejercicio proviene de la *National Longitudinal Survey of Young Working Women* de los Estados Unidos. En los siguientes links se encuentran los datos, la descripción dellada de los datos y el código utilizado en R:
+- [Datos](https://www.stata-press.com/data/r17/nlswork.dta)
+- [Descripción de la información](https://rdrr.io/rforge/sampleSelection/man/nlswork.html)
+- [Código en R](https://gusgarciacruz.github.io/EconometriaAvanzadaII/ModelosPanel/L1.R)
+
+---
+# &lt;span style="font-size:70%"&gt;Ejercicio aplicado en R: determinantes de los salarios con un panel de datos&lt;/span&gt;
+
+.small-code[
+Cargando las librerías
+
+
+```r
+library(haven); library(plm); library(tidyverse); library(summarytools)
+library(gt); library(knitr); library(kableExtra); library(tibble); library(modelsummary)
+```
+
+Leyendo los datos y procesando la información
+
+
+```r
+nlswork &lt;- read_dta("http://www.stata-press.com/data/r17/nlswork.dta") |&gt; # leemos la base de datos
+                select(idcode, year, ln_wage, age, not_smsa, south) # seleccionando variables
+
+View(nlswork)
+head(nlswork) # take a quick peak at the data
+```
+
+```
+# A tibble: 6 x 6
+  idcode  year ln_wage   age not_smsa south
+   &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;
+1      1    70    1.45    18        0     0
+2      1    71    1.03    19        0     0
+3      1    72    1.59    20        0     0
+4      1    73    1.78    21        0     0
+5      1    75    1.78    23        0     0
+6      1    77    1.78    25        0     0
+```
+
+```r
+names(nlswork)
+```
+
+```
+[1] "idcode"   "year"     "ln_wage"  "age"      "not_smsa" "south"   
+```
+]
+
+---
+# &lt;span style="font-size:70%"&gt;Ejercicio aplicado en R: determinantes de los salarios con un panel de datos&lt;/span&gt;
+
+Estadísticas descriptivas
+
+.small-code[
+
+```r
+summary(nlswork)
+```
+
+```
+     idcode          year          ln_wage           age       
+ Min.   :   1   Min.   :68.00   Min.   :0.000   Min.   :14.00  
+ 1st Qu.:1327   1st Qu.:72.00   1st Qu.:1.361   1st Qu.:23.00  
+ Median :2606   Median :78.00   Median :1.641   Median :28.00  
+ Mean   :2601   Mean   :77.96   Mean   :1.675   Mean   :29.05  
+ 3rd Qu.:3881   3rd Qu.:83.00   3rd Qu.:1.964   3rd Qu.:34.00  
+ Max.   :5159   Max.   :88.00   Max.   :5.264   Max.   :46.00  
+                                                NA's   :24     
+    not_smsa          south       
+ Min.   :0.0000   Min.   :0.0000  
+ 1st Qu.:0.0000   1st Qu.:0.0000  
+ Median :0.0000   Median :0.0000  
+ Mean   :0.2824   Mean   :0.4096  
+ 3rd Qu.:1.0000   3rd Qu.:1.0000  
+ Max.   :1.0000   Max.   :1.0000  
+ NA's   :8        NA's   :8       
+```
+
+
+
+```r
+st_options(lang = "es", footnote=NA, headings = FALSE)
+print(dfSummary(nlswork[,c("ln_wage","south")], valid.col = FALSE, silent=FALSE), method = "render", varnumbers=F)
+```
+
+<div class="container st-container"><table class="table table-striped table-bordered st-table st-table-striped st-table-bordered st-multiline ">
+  <thead>
+    <tr>
+      <th align="center" class="st-protect-top-border"><strong>Variable</strong></th>
+      <th align="center" class="st-protect-top-border"><strong>Etiqueta</strong></th>
+      <th align="center" class="st-protect-top-border"><strong>Estad&#0237;sticas / Valores</strong></th>
+      <th align="center" class="st-protect-top-border"><strong>Frec. (% sobre v&#0225;lidos)</strong></th>
+      <th align="center" class="st-protect-top-border"><strong>Gr&#0225;fico</strong></th>
+      <th align="center" class="st-protect-top-border"><strong>Perdidos</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">ln_wage
+[numeric]</td>
+      <td align="left">ln(wage/GNP deflator)</td>
+      <td align="left" style="padding:8;vertical-align:middle"><table style="border-collapse:collapse;border:none;margin:0"><tr style="background-color:transparent"><td style="padding:0;margin:0;border:0" align="left">Media (d-s) : 1.7 (0.5)</td></tr><tr style="background-color:transparent"><td style="padding:0;margin:0;border:0" align="left">min &le; mediana &le; max:</td></tr><tr style="background-color:transparent"><td style="padding:0;margin:0;border:0" align="left">0 &le; 1.6 &le; 5.3</td></tr><tr style="background-color:transparent"><td style="padding:0;margin:0;border:0" align="left">RI (CV) : 0.6 (0.3)</td></tr></table></td>
+      <td align="left" style="vertical-align:middle">8173 valores distintos</td>
+      <td align="left" style="vertical-align:middle;padding:0;background-color:transparent;"><img style="border:none;background-color:transparent;padding:0;max-width:max-content;" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAJgAAABuBAMAAAApJ8cWAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAD1BMVEX////9/v2mpqbw8PD///+xh0SBAAAAAnRSTlMAAHaTzTgAAAABYktHRACIBR1IAAAAB3RJTUUH5ggXDSg4jPDzvwAAAIFJREFUaN7t2MENgCAMQFFWwA2sG8j+uxmthxo0pFDi5f8jCQ9ICAdSop5ynWjZ0Te2lbMdDAwMDCweW/S9DsIupYCBgYGBgYGBgYG5MM8fQhPz7A8MDAwMDAwMDAzsb+z+oQ3CzPwnpqusMZgOgU3DxFyKYexl5mxMbM1jDpaopwPde62ypriHHQAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMi0wOC0yM1QxMzo0MDo1NiswMDowMG21U6YAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjItMDgtMjNUMTM6NDA6NTYrMDA6MDAc6OsaAAAAAElFTkSuQmCC"></td>
+      <td align="center">0
+(0.0%)</td>
+    </tr>
+    <tr>
+      <td align="left">south
+[numeric]</td>
+      <td align="left">1 if south</td>
+      <td align="left" style="padding:8;vertical-align:middle"><table style="border-collapse:collapse;border:none;margin:0"><tr style="background-color:transparent"><td style="padding:0;margin:0;border:0" align="left">Min   : 0</td></tr><tr style="background-color:transparent"><td style="padding:0;margin:0;border:0" align="left">Media : 0.4</td></tr><tr style="background-color:transparent"><td style="padding:0;margin:0;border:0" align="left">Max   : 1</td></tr></table></td>
+      <td align="left" style="padding:0;vertical-align:middle"><table style="border-collapse:collapse;border:none;margin:0"><tr style="background-color:transparent"><td style="padding:0 2px 0 7px;margin:0;border:0" align="right">0</td><td style="padding:0 2px;border:0;" align="left">:</td><td style="padding:0 4px 0 6px;margin:0;border:0" align="right">16843</td><td style="padding:0;border:0" align="left">(</td><td style="padding:0 2px;margin:0;border:0" align="right">59.0%</td><td style="padding:0 4px 0 0;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 2px 0 7px;margin:0;border:0" align="right">1</td><td style="padding:0 2px;border:0;" align="left">:</td><td style="padding:0 4px 0 6px;margin:0;border:0" align="right">11683</td><td style="padding:0;border:0" align="left">(</td><td style="padding:0 2px;margin:0;border:0" align="right">41.0%</td><td style="padding:0 4px 0 0;border:0" align="left">)</td></tr></table></td>
+      <td align="left" style="vertical-align:middle;padding:0;background-color:transparent;"><img style="border:none;background-color:transparent;padding:0;max-width:max-content;" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAGUAAAA3BAMAAADnFJkAAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAD1BMVEX////9/v2mpqbw8PD///+xh0SBAAAAAnRSTlMAAHaTzTgAAAABYktHRACIBR1IAAAAB3RJTUUH5ggXDSg5+/fDKQAAAD9JREFUSMdjYBh+QIkEoADVo2xMPBjVM6pnVM/w1kNOGSJIAhCgsx4CXsCqB3+4GY3qGdUzqmcE6SGnDBlOAADPUVxOmytYlQAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMi0wOC0yM1QxMzo0MDo1NyswMDowMMvCWBIAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjItMDgtMjNUMTM6NDA6NTcrMDA6MDC6n+CuAAAAAElFTkSuQmCC"></td>
+      <td align="center">8
+(0.0%)</td>
+    </tr>
+  </tbody>
+</table></div>
+]
+
+---
+# &lt;span style="font-size:70%"&gt;Ejercicio aplicado en R: determinantes de los salarios con un panel de datos&lt;/span&gt;
+&lt;font size = "3"&gt;
+.small-code[
+Número de idcode y años
+&lt;p style="margin-bottom: -0.8em"&gt;
+
+```r
+length(unique(nlswork$idcode))
+```
+
+```
+[1] 4711
+```
+
+```r
+length(unique(nlswork$year))
+```
+
+```
+[1] 15
+```
+&lt;br&gt;
+Determinando si el panel se encuentra balanceado
+&lt;p style="margin-bottom: -0.8em"&gt;
+
+```r
+pdim(nlswork)$balanced
+```
+
+```
+[1] FALSE
+```
+
+```r
+is.pbalanced(nlswork)
+```
+
+```
+[1] FALSE
+```
+&lt;br&gt;
+Balanceando el panel
+&lt;p style="margin-bottom: -0.8em"&gt;
+
+```r
+nlswork_balanced &lt;- make.pbalanced(nlswork, 
+                                   balance.type = "shared.individuals",
+                                   index = c("idcode","year"))
+pdim(nlswork_balanced)$balanced
+```
+
+```
+[1] TRUE
+```
+&lt;br&gt;
+Dando estructura panel a los datos
+&lt;p style="margin-bottom: -0.8em"&gt;
+
+```r
+nlswork_balanced &lt;-  pdata.frame(nlswork_balanced, c("idcode","year"))
+```
+]
+
+---
+# &lt;span style="font-size:70%"&gt;Ejercicio aplicado en R: determinantes de los salarios con un panel de datos&lt;/span&gt;
+
+.medium-code[
+Utilizamos el paquete [```modelsummary```](https://vincentarelbundock.github.io/modelsummary/articles/modelsummary.html) para generar tablas editadas (Word, tex, text, png, html...)
+
+```r
+modelos &lt;- list("Pool" = plm(ln_wage ~ age + I(age^2) + not_smsa + south + factor(year), data = nlswork_balanced, model = "pooling"),
+                "RE"   = plm(ln_wage ~ age + I(age^2) + not_smsa + south + factor(year), data = nlswork_balanced, model = "random"),
+                "FE"   = plm(ln_wage ~ age + I(age^2) + not_smsa + south, data = nlswork_balanced, model = "within", effect = "twoway"))
+cm &lt;- c('(Intercept)' = 'Constante', 'age' = 'Edad', 'I(age2)' = 'Edad2', 'not_smsa' = 'No SMSA (=1)', 'south' = 'Sur (=1)')
+modelsummary(modelos, output = 'gt', coef_map = cm, stars = c('*'=.1, '**'=.05, '***'=.01), statistic = "std.error", title = 'Tabla 1. Determinantes de los salarios', gof_omit = "R2 Adj", coef_omit = "[^age|not_smsa|south]") |&gt; 
+    tab_style(style = cell_text(size = 'small'), locations = cells_body(rows = 1:8)) |&gt; 
+    tab_style(style = cell_text(color = 'red'), locations = cells_body(rows = 1)) |&gt;  
+    tab_source_note(source_note = "Nota: Errores estándar en paréntesis") |&gt; 
+    tab_style(style = cell_text(color = "black", size = "x-small"), locations = cells_source_notes())
+```
+
+<div id="dwohxqsjlr" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#dwohxqsjlr .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#dwohxqsjlr .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#dwohxqsjlr .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#dwohxqsjlr .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#dwohxqsjlr .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#dwohxqsjlr .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#dwohxqsjlr .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#dwohxqsjlr .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#dwohxqsjlr .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#dwohxqsjlr .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#dwohxqsjlr .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#dwohxqsjlr .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#dwohxqsjlr .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#dwohxqsjlr .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#dwohxqsjlr .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#dwohxqsjlr .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#dwohxqsjlr .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#dwohxqsjlr .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#dwohxqsjlr .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#dwohxqsjlr .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#dwohxqsjlr .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#dwohxqsjlr .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#dwohxqsjlr .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#dwohxqsjlr .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#dwohxqsjlr .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#dwohxqsjlr .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#dwohxqsjlr .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#dwohxqsjlr .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#dwohxqsjlr .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-left: 4px;
+  padding-right: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#dwohxqsjlr .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#dwohxqsjlr .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#dwohxqsjlr .gt_left {
+  text-align: left;
+}
+
+#dwohxqsjlr .gt_center {
+  text-align: center;
+}
+
+#dwohxqsjlr .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#dwohxqsjlr .gt_font_normal {
+  font-weight: normal;
+}
+
+#dwohxqsjlr .gt_font_bold {
+  font-weight: bold;
+}
+
+#dwohxqsjlr .gt_font_italic {
+  font-style: italic;
+}
+
+#dwohxqsjlr .gt_super {
+  font-size: 65%;
+}
+
+#dwohxqsjlr .gt_two_val_uncert {
+  display: inline-block;
+  line-height: 1em;
+  text-align: right;
+  font-size: 60%;
+  vertical-align: -0.25em;
+  margin-left: 0.1em;
+}
+
+#dwohxqsjlr .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 75%;
+  vertical-align: 0.4em;
+}
+
+#dwohxqsjlr .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#dwohxqsjlr .gt_slash_mark {
+  font-size: 0.7em;
+  line-height: 0.7em;
+  vertical-align: 0.15em;
+}
+
+#dwohxqsjlr .gt_fraction_numerator {
+  font-size: 0.6em;
+  line-height: 0.6em;
+  vertical-align: 0.45em;
+}
+
+#dwohxqsjlr .gt_fraction_denominator {
+  font-size: 0.6em;
+  line-height: 0.6em;
+  vertical-align: -0.05em;
+}
+</style>
+<table class="gt_table">
+  &lt;caption&gt;Tabla 1. Determinantes de los salarios&lt;/caption&gt;
+  
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1"> </th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">Pool</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">RE</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">FE</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td class="gt_row gt_left" style="font-size: small; color: #FF0000;">Edad</td>
+<td class="gt_row gt_center" style="font-size: small; color: #FF0000;">0.026</td>
+<td class="gt_row gt_center" style="font-size: small; color: #FF0000;">0.031</td>
+<td class="gt_row gt_center" style="font-size: small; color: #FF0000;">0.020</td></tr>
+    <tr><td class="gt_row gt_left" style="font-size: small;"></td>
+<td class="gt_row gt_center" style="font-size: small;">(0.023)</td>
+<td class="gt_row gt_center" style="font-size: small;">(0.020)</td>
+<td class="gt_row gt_center" style="font-size: small;">(0.036)</td></tr>
+    <tr><td class="gt_row gt_left" style="font-size: small;">No SMSA (=1)</td>
+<td class="gt_row gt_center" style="font-size: small;">-0.201***</td>
+<td class="gt_row gt_center" style="font-size: small;">-0.091***</td>
+<td class="gt_row gt_center" style="font-size: small;">-0.055</td></tr>
+    <tr><td class="gt_row gt_left" style="font-size: small;"></td>
+<td class="gt_row gt_center" style="font-size: small;">(0.022)</td>
+<td class="gt_row gt_center" style="font-size: small;">(0.033)</td>
+<td class="gt_row gt_center" style="font-size: small;">(0.037)</td></tr>
+    <tr><td class="gt_row gt_left" style="font-size: small;">Sur (=1)</td>
+<td class="gt_row gt_center" style="font-size: small;">-0.157***</td>
+<td class="gt_row gt_center" style="font-size: small;">-0.119***</td>
+<td class="gt_row gt_center" style="font-size: small;">-0.090**</td></tr>
+    <tr><td class="gt_row gt_left" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000; font-size: small;"></td>
+<td class="gt_row gt_center" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000; font-size: small;">(0.021)</td>
+<td class="gt_row gt_center" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000; font-size: small;">(0.037)</td>
+<td class="gt_row gt_center" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000; font-size: small;">(0.044)</td></tr>
+    <tr><td class="gt_row gt_left" style="font-size: small;">Num.Obs.</td>
+<td class="gt_row gt_center" style="font-size: small;">1290</td>
+<td class="gt_row gt_center" style="font-size: small;">1290</td>
+<td class="gt_row gt_center" style="font-size: small;">1290</td></tr>
+    <tr><td class="gt_row gt_left" style="font-size: small;">R2</td>
+<td class="gt_row gt_center" style="font-size: small;">0.233</td>
+<td class="gt_row gt_center" style="font-size: small;">0.298</td>
+<td class="gt_row gt_center" style="font-size: small;">0.007</td></tr>
+    <tr><td class="gt_row gt_left">AIC</td>
+<td class="gt_row gt_center">1095.8</td>
+<td class="gt_row gt_center">-178.3</td>
+<td class="gt_row gt_center">-299.4</td></tr>
+    <tr><td class="gt_row gt_left">BIC</td>
+<td class="gt_row gt_center">1199.1</td>
+<td class="gt_row gt_center">-75.1</td>
+<td class="gt_row gt_center">-273.5</td></tr>
+    <tr><td class="gt_row gt_left">RMSE</td>
+<td class="gt_row gt_center">0.36</td>
+<td class="gt_row gt_center">0.22</td>
+<td class="gt_row gt_center">0.21</td></tr>
+  </tbody>
+  <tfoot class="gt_sourcenotes">
+    <tr>
+      <td class="gt_sourcenote" style="color: #000000; font-size: x-small;" colspan="4">* p &lt; 0.1, ** p &lt; 0.05, *** p &lt; 0.01</td>
+    </tr>
+    <tr>
+      <td class="gt_sourcenote" style="color: #000000; font-size: x-small;" colspan="4">Nota: Errores estándar en paréntesis</td>
+    </tr>
+  </tfoot>
+  
+</table>
+</div>
+]
+
+---
+# &lt;span style="font-size:70%"&gt;Ejercicio aplicado en R: determinantes de los salarios con un panel de datos&lt;/span&gt;
+&lt;font size = "3"&gt;
+
+.small-code[
+&lt;p style="margin-bottom: -0.8em"&gt;
+&lt;span style="color:blue"&gt;Los modelos&lt;/span&gt;
+
+```r
+pool &lt;- plm(ln_wage ~ age + I(age^2) + not_smsa + south + factor(year), data = nlswork_balanced, model = "pooling")
+re &lt;- plm(ln_wage ~ age + I(age^2) + not_smsa + south + factor(year), data = nlswork_balanced, model = "random")
+fe &lt;- plm(ln_wage ~ age + I(age^2) +  not_smsa + south, data = nlswork_balanced, model = "within", effect = "twoway")
+```
+&lt;br&gt;
+&lt;p style="margin-bottom: -0.8em"&gt;
+&lt;span style="color:blue"&gt;Test de efectos inobservables&lt;/span&gt;
+
+El test de efectos inobservables *a la* Wooldridge (ver Wooldridge (2010) 10.4.4), es un test semiparamétrico con `\(H_{0}:\sigma^{2}_{c_i}=0\)`, es decir que no existen efectos inobservables en los residuales
+
+
+```r
+pwtest(ln_wage ~ age + I(age^2) + not_smsa + south, data = nlswork_balanced)
+```
+
+```
+
+	Wooldridge's test for unobserved individual effects
+
+data:  formula
+z = 4.3892, p-value = 1.138e-05
+alternative hypothesis: unobserved effect
+```
+&lt;br&gt;
+&lt;p style="margin-bottom: -0.8em"&gt;
+&lt;span style="color:blue"&gt;Breusch-Pagan test&lt;/span&gt;
+
+El test de BP es un test LM que ayuda a decidir entre RE y *pooled OLS*. La hipótesis nula es las varianzas a través de la unidades de sección cruzada son cero, esto es que no hay diferencias significativas enter unidades de corte transversal (es decir, no hay efectos panel)
+
+
+```r
+plmtest(pool, type="bp")
+```
+
+```
+
+	Lagrange Multiplier Test - (Breusch-Pagan) for balanced
+	panels
+
+data:  ln_wage ~ age + I(age^2) + not_smsa + south + factor(year)
+chisq = 3498.5, df = 1, p-value &lt; 2.2e-16
+alternative hypothesis: significant effects
+```
+]
+
+---
+# &lt;span style="font-size:70%"&gt;Ejercicio aplicado en R: determinantes de los salarios con un panel de datos&lt;/span&gt;
+&lt;font size = "3"&gt;
+
+.small-code[
+&lt;p style="margin-bottom: -0.8em"&gt;
+&lt;span style="color:blue"&gt;Test de *poolability*&lt;/span&gt;
+
+`\(H_{0}\)`: todos los interceptos son iguales
+
+
+```r
+pooltest(pool, fe)
+```
+
+```
+
+	F statistic
+
+data:  ln_wage ~ age + I(age^2) + not_smsa + south + factor(year)
+F = 26.251, df1 = 85, df2 = 1186, p-value &lt; 2.2e-16
+alternative hypothesis: unstability
+```
+&lt;br&gt;
+
+```r
+pFtest(fe, pool)
+```
+
+```
+
+	F test for twoways effects
+
+data:  ln_wage ~ age + I(age^2) + not_smsa + south
+F = 26.251, df1 = 85, df2 = 1186, p-value &lt; 2.2e-16
+alternative hypothesis: significant effects
+```
+&lt;br&gt;
+&lt;p style="margin-bottom: -0.8em"&gt;
+&lt;span style="color:blue"&gt;Test de Hausman&lt;/span&gt;
+
+
+
+```r
+phtest(fe, re)
+```
+
+```
+
+	Hausman Test
+
+data:  ln_wage ~ age + I(age^2) + not_smsa + south
+chisq = 5.4579, df = 4, p-value = 0.2435
+alternative hypothesis: one model is inconsistent
+```
+]
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
