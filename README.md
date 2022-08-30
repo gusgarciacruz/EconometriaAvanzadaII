@@ -14,5 +14,6 @@ Profesor: [Gustavo A. García](https://gusgarciacruz.github.io/cv)
 
 [Modelos espaciales en datos panel](https://gusgarciacruz.github.io/EconometriaAvanzadaII/ModelosPanelEspacial/ModelosPanelEspacial.html)
 
-
 [Trabajo de investigación](https://gusgarciacruz.github.io/EconometriaAvanzadaII/TrabajoInvestigacion/Researchwork2022-II.pdf)
+
+[Mapas](https://gusgarciacruz.github.io/EconometriaAvanzadaII/Mapas)
