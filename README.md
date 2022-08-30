@@ -16,4 +16,4 @@ Profesor: [Gustavo A. García](https://gusgarciacruz.github.io/cv)
 
 [Trabajo de investigación](https://gusgarciacruz.github.io/EconometriaAvanzadaII/TrabajoInvestigacion/Researchwork2022-II.pdf)
 
-[Mapas](https://gusgarciacruz.github.io/EconometriaAvanzadaII/Mapas)
+[Mapas](https://github.com/gusgarciacruz/EconometriaAvanzadaII/tree/main/Mapas)
