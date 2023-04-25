@@ -2,7 +2,7 @@ library(sp); library(spdep); library(splm); library(plm)
 library(RColorBrewer); library(classInt); library(lattice)
 library(stargazer); library(sf); library(maptools); library(tmap) 
 library(tmaptools); library(tidyverse); library(summarytools)
-library(rgeoda); library(tidylog); library(spatialreg)
+library(rgeoda); library(tidylog); library(spatialreg); library(rgdal)
 
 setwd("C:/Users/ggarci24/OneDrive - Universidad EAFIT/EAFIT/Cursos EAFIT")
 
@@ -108,7 +108,8 @@ tmap_save(filename = "./Econometria II Maestr?a Eco/R/2021-II/Tema 4/mymap.png",
 # Webs de mapas: https://geocompr.robinlovelace.net/adv-map.html
 #                https://spatialanalysis.github.io/lab_tutorials/4_R_Mapping.html
 
-# Construyendo la matriz de pesos espaciales tipo Queen
+# Construyendo la matriz de pesos espaciales 
+# Tipo Queen
 nb <- poly2nb(us,queen=T)
 nb
 
@@ -131,6 +132,33 @@ ggplot() +
   geom_sf(data=cnt, color="red")  +
   geom_sf(data = line_nb, fill = "grey40", size=.4) +
   theme_void()
+
+# 6 vecinos más cercanos
+coords <- st_centroid(st_geometry(us), of_largest_polygon=TRUE)
+plot(coords)
+knn6 <- knearneigh(coords, k=6)
+nb_knn6 <- knn2nb(knn6)
+We_knn6 <- nb2listw(nb_knn6, style = "W")
+names(We_knn6)
+We_knn6$weights
+
+plot(st_geometry(us), border="grey")
+plot(nb_knn6, coords, add=TRUE, col = "red")
+title(main="W Knn, k = 6")
+
+# Con distancia
+# Primero detectamos las distancia max que hay entre centroides
+k1 <- knn2nb(knearneigh(coords))
+critical.threshold <- max(unlist(nbdists(k1,coords)))
+critical.threshold
+
+nb.dist.band <- dnearneigh(coords, 0, critical.threshold)
+summary(nb.dist.band, coords)
+We_dis = nb2listw(nb.dist.band, style = "W")
+
+plot(st_geometry(us), border="grey")
+plot(nb.dist.band, coords, add=TRUE, col="red")
+title(main="W Distance")
 
 # ESDA
 # Contraste global de autocorrelación espacial
