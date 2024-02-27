@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Geographically Weighted Regression</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Gustavo A. García   ggarci24@eafit.edu.co                  " />
+    <script src="libs/header-attrs-2.23/header-attrs.js"></script>
+    <script src="libs/fabric-4.3.1/fabric.min.js"></script>
+    <link href="libs/xaringanExtra-scribble-0.0.1/scribble.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra-scribble-0.0.1/scribble.js"></script>
+    <script>document.addEventListener('DOMContentLoaded', function() { window.xeScribble = new Scribble({"pen_color":["#FF0000"],"pen_size":3,"eraser_size":30,"palette":[]}) })</script>
+    <script src="libs/clipboard-2.0.6/clipboard.min.js"></script>
+    <link href="libs/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.js"></script>
+    <script>window.xaringanExtraClipboard(null, {"button":"<i class=\"fa fa-clipboard\"><\/i>","success":"<i class=\"fa fa-check\" style=\"color: #90BE6D\"><\/i>","error":"<i class=\"fa fa-times-circle\" style=\"color: #F94144\"><\/i>"})</script>
+    <link href="libs/font-awesome-6.4.0/css/all.min.css" rel="stylesheet" />
+    <link href="libs/font-awesome-6.4.0/css/v4-shims.min.css" rel="stylesheet" />
+    <link href="libs/xaringanExtra-extra-styles-0.2.6/xaringanExtra-extra-styles.css" rel="stylesheet" />
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# Geographically Weighted Regression
+]
+.author[
+### Gustavo A. García <br> <span class="notbold" style="font-size:65%"><a href="mailto:ggarci24@eafit.edu.co" class="email">ggarci24@eafit.edu.co</a></span> <br> <br> <br> <br> <br> <br> <br> <br> <br>
+]
+.date[
+### <span class="notbold" style="font-size:65%">Econometría avanzada II<br> PhD/Maestría en Economía <br> Universidad EAFIT</span>
+]
+
+---
+
+
+
+
+&lt;style&gt;
+.notbold{
+    font-weight:normal
+}
+
+body {
+text-align: justify;
+}
+
+h1{
+      margin-top: -1px;
+      margin-bottom: -3px;
+}
+
+.small-code pre{
+  margin-bottom: -10px;
+  
+}  
+
+.medium-code pre{
+  margin-bottom: 2px;
+  
+}
+
+&lt;/style&gt;
+
+
+
+
+
+
+&lt;font size = "5"&gt;
+
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+
+Link slides en formato [html](https://gusgarciacruz.github.io/EconometriaAvanzadaII/GWR/GWR.html)
+
+Link slides en formato [PDF](https://gusgarciacruz.github.io/EconometriaAvanzadaII/GWR/GWR.pdf)
+
+---
+# &lt;span style="font-size:80%"&gt;En este tema&lt;/span&gt;
+
+- &lt;span style="font-size:150%"&gt;[&lt;span style="color:black"&gt;Motivación](#motivacion)&lt;/span&gt; &lt;br&gt; &lt;br&gt;
+
+- &lt;span style="font-size:150%"&gt;[&lt;span style="color:black"&gt;Especificación de una GWR](#especificacion)&lt;/span&gt; &lt;br&gt; &lt;br&gt;
+
+- &lt;span style="font-size:150%"&gt;[&lt;span style="color:black"&gt;Función de densidad kernel y ancho de banda `\(h\)`](#kernel)&lt;/span&gt; &lt;br&gt; &lt;br&gt;
+
+- &lt;span style="font-size:150%"&gt;[&lt;span style="color:black"&gt;Multicolinealidad](#multicolinealidad)&lt;/span&gt; &lt;br&gt; &lt;br&gt;
+
+- &lt;span style="font-size:150%"&gt;[&lt;span style="color:black"&gt;GWR restringido](#restringido)&lt;/span&gt; &lt;br&gt; &lt;br&gt;
+
+- &lt;span style="font-size:150%"&gt;[&lt;span style="color:black"&gt;GWR multi-escala (MGWR)](#mgwr)&lt;/span&gt; &lt;br&gt; &lt;br&gt;
+
+- &lt;span style="font-size:150%"&gt;[&lt;span style="color:black"&gt;Ejercicio aplicado en R](#r)&lt;/span&gt;
+
+---
+# &lt;span style="font-size:80%"&gt;Lecturas&lt;/span&gt;
+- &lt;span style="font-size:120%"&gt;Brunsdon,C., Fotheringham, A.,  Charlton, M. (1996). "Geographically weighted regression: a method for exploring spatial nonstationarity". *Geographical Analysis*, 28(4):281-298&lt;br&gt;
+
+- &lt;span style="font-size:120%"&gt;Fotheringham, A., Brunsdon,C., Charlton, M. (2002). *Geographically weighted regression: the analysis of spatially varying relationships*. John Wiley &amp; Sons &lt;br&gt;
+
+- &lt;span style="font-size:120%"&gt; Wheeler, D.C. (2007). "Diagnostic tools and a remedial method for collinearity in geographically weighted regression." *Environment and Planning A*, 39(10):2464–2481 &lt;br&gt;
+
+- &lt;span style="font-size:120%"&gt;Wheeler, D.C., Páez, A. (2010). Geographically Weighted Regression. In: Fischer, M., Getis, A. (eds) Handbook of Applied Spatial Analysis. Springer, Berlin, Heidelberg. https://doi.org/10.1007/978-3-642-03647-7_22 &lt;br&gt;
+
+- &lt;span style="font-size:120%"&gt;Wheeler, D.C. (2014). Geographically Weighted Regression. In: Fischer, M., Nijkamp, P. (eds) Handbook of Regional Science. Springer, Berlin, Heidelberg. https://doi.org/10.1007/978-3-642-23430-9_77 &lt;br&gt;
+
+- &lt;span style="font-size:120%"&gt; Algunas webs: [crd230](https://crd230.github.io/gwr.html), [quarcs-lab](https://rpubs.com/quarcs-lab/tutorial-gwr1), [MGWR](https://bookdown.org/lexcomber/GEOG3195/spatial-models---geographically-weighted-regression.html) &lt;br&gt;
+
+- &lt;span style="font-size:120%"&gt;Paquetes en R: [`spgwr`](https://rsbivand.github.io/spgwr/articles/GWR.html), [`gwrr`](https://cran.r-project.org/web/packages/gwrr/gwrr.pdf), [`GWmodel`](https://cran.r-project.org/web/packages/GWmodel/GWmodel.pdf), [`GWPR.light`](https://cran.r-project.org/web/packages/GWPR.light/GWPR.light.pdf) y [`mgwrsar`](https://cran.r-project.org/web/packages/GWPR.light/vignettes/introduction_of_GWPR.html)
+
+---
+name: motivacion
+# &lt;span style="font-size:80%"&gt;Motivación&lt;/span&gt;
+&lt;spam style="font-size:112%"&gt;
+Si estamos interesados en la influencia o efecto de algunas variables `\(x\)` sobre alguna variable `\(y\)`, y asumiendo una relación lineal, se puede estimar el siguiente modelo de regresión lineal múltiple (RLM):
+
+`$$y_i = \beta_0 + \sum_{k=1}^{p} \beta_kx_{ik} + u_i$$`
+
+Aquí `\(i\)` representa una unidad de observación espacial (bloques/manzanas, barrios, comunas, ciudades, regiones...)
+
+Como sabemos, uno de los supuestos del modelo de RLM es que la relación entre las `\(x\)` y `\(y\)` es &lt;span style="color:blue"&gt;estacionaria&lt;/span&gt;
+
+&lt;span style="color:blue"&gt;Efectos `\((\beta's)\)` estacionarios&lt;/span&gt;
+&lt;p style="margin-bottom: -1em"&gt;
+- los coeficientes `\(\beta\)` no cambian a través del tiempo ni el espacio
+- en estadística espacial, estacionariedad equivale a la homogeneidad de un efecto o, lo que es lo mismo, a que un proceso funciona igual independientemente de dónde se observe el proceso  
+
+El supuesto de estacionariedad de los `\(\beta\)` puede ser &lt;span style="color:blue"&gt;débil&lt;/span&gt;, y es posible preguntarnos &lt;span style="color:blue"&gt;si las `\(x\)` afectan a `\(y\)` en forma diferente dependiendo de la localización geográfica analizada&lt;/span&gt;
+
+En este tema, se va a analizar la &lt;span style="color:blue"&gt;desigual distribución espacial&lt;/span&gt; en la relación entre dos o más variables `\(x\)` y `\(y\)`. El método que se va a cubrir intenta &lt;span style="color:blue"&gt;modelar la heterogeneidad espacial&lt;/span&gt;, esto es la &lt;span style="color:blue"&gt;Regresión Geográficamente Ponderada&lt;/span&gt; o &lt;span style="color:blue"&gt;Geographically Weighed Regression (GWR)&lt;/span&gt; 
+
+---
+name: especificacion
+# &lt;span style="font-size:120%"&gt;Especificación de una GWR&lt;/span&gt;
+&lt;spam style="font-size:90%"&gt;
+
+La GWR fue propuesta por [Brunsdon et al. (1996)](https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1538-4632.1996.tb00936.x) y tiene como objetivo estimar los `\(\beta\)` en cada localización `\(i\)`, usando los centróides de los poligonos de los datos utilizados. El modelo tiene la siguiente estructura:
+
+`$$y_i = \beta_{i0} + \sum_{k=1}^{p} \beta_{ik}x_{ik} + u_i$$`
+
+donde `\(\beta_{ip}\)` es la realización local de `\(\beta_p\)` en la localización `\(i\)`
+
+Visualmente sería:
+
+.pull-left-50[
+&lt;img src="f1.png" width="90%" style="display: block; margin: auto;" /&gt;
+]
+
+.pull-right-50[
+&lt;img src="f2.jpg" width="90%" style="display: block; margin: auto;" /&gt;
+]
+&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;
+&lt;span style="color:blue"&gt;La GWR es una evolución de la regresión por mínimos cuadrados ordinarios (MCO)&lt;/span&gt; y añade un nivel de sofisticación al modelo al permitir que las &lt;span style="color:blue"&gt;relaciones entre las variables independientes y dependientes varíen según la localización&lt;/span&gt;
+
+---
+# &lt;span style="font-size:80%"&gt;Especificación de una GWR&lt;/span&gt;
+&lt;spam style="font-size:120%"&gt;
+Los coeficientes de regresión son estimados para cada localización independientemente por &lt;span style="color:blue"&gt;mínimos cuadrados ponderados&lt;/span&gt;. La matriz de ponderación es una matriz diagonal en la que cada elemento diagonal `\(w_{ij}\)` es una función de la localización de la observación. La matriz de coeficientes estimados tiene la forma:
+
+`$$\pmb{\hat{\beta}}(i) = [\textbf{X}^{T}\textbf{W}(i)\textbf{X}]^{-1}\textbf{X}^{T}\textbf{W}(i)\textbf{y}$$`
+donde `\(\textbf{W}(i)=diag[w_1(i),...,w_n(i)]\)` es la matriz diagonal de pesos que varia en cada localización `\(i\)`. &lt;span style="color:blue"&gt;La matriz de ponderación da más valor a las observaciones que están cerca de `\(i\)`&lt;/span&gt; ya que se supone que las observaciones cercanas se influyen mutuamente más que las lejanas (ley de Tobler)  
+
+&lt;span style="color:blue"&gt;El modelo básico de regresión MCO es sólo un caso especial del modelo GWR, en el que los coeficientes son constantes en el espacio&lt;/span&gt;
+
+Al estimar una GWR hay que tener en cuenta tres principales aspectos:
+&lt;p style="margin-bottom: -1em"&gt;
+- la función de densidad kernel que asigna las ponderaciones `\(w_{ij}\)` 
+- el ancho de banda (*bandwidth*) `\(h\)` de la función, que determina el grado de decaimiento de la distancia
+- a quién considerar como vecinos
+
+---
+name: kernel
+# &lt;span style="font-size:80%"&gt;Función de densidad kernel y ancho de banda `\(h\)`&lt;/span&gt;
+&lt;spam style="font-size:96%"&gt;
+
+&lt;span style="color:blue"&gt;La función de densidad kernel determina el peso asignado a las unidades vecinas&lt;/span&gt;
+
+Existen varias funciones de densidad que se pueden utilizar, las más comúnes son:
+
+- la función ponderada Gaussiana:
+
+`$$w_{ij} = exp\left(-\frac{d_{ij}^2}{h^2}\right)$$`  
+donde `\(d_{ij}\)` es la distancia entre la localización `\(i\)` y `\(j\)`, y `\(h\)` es el ancho de banda
+
+- la función bicuadrada
+`$$w_{ij} = 1 - \left(\frac{d_{ij}^2}{h^2}\right)^2$$`
+
+- la función tricúbica: 
+
+`$$w_{ij} = 1 - \left(\frac{d_{ij}^3}{h^3}\right)^3$$`
+
+---
+# &lt;span style="font-size:80%"&gt;Función de densidad kernel y ancho de banda `\(h\)`&lt;/span&gt;
+&lt;spam style="font-size:100%"&gt;
+
+Escoger la función de ponderación también implica escoger el ancho de banda `\(h\)`. Existen diferentes formas de hacer esto, pero resaltan dos métodos comúnmente utilizados: el método *cross-validation* (CV) y la minimización del críterio de información de Akaike (AIC) 
+
+- CV
+&lt;div&gt;
+En este método se intenta encontar la `\(h\)` que minimice la CV. La idea es minimizar la suma de los errores al cuadrado en todas las localizaciones `\(i\)`, y se llega a un ancho de banda óptimo. El CV toma la forma:
+
+`$$CV = \sum_i [y_i - \hat{y}_{\neq i}(\beta)]^2$$` &lt;div&gt; 
+donde `\(\hat{y}_{\neq i}(\beta)\)` es el valor estimado de `\(y_i\)` con la observación diferente al punto `\(i\)`  
+
+- AIC
+&lt;div&gt;
+Minimización del AIC
+
+El procedimiento de estimación del modelo GWR implica:
+&lt;p style="margin-bottom: -1em"&gt;
+1. el ancho de banda kernel es estimado por CV o AIC
+2. Los ponderadores son calculados utilizando alguna de las funciones de densidad
+3. los coefcientes de regresión son estimados en cada localización `\(i\)`
+
+---
+name: multicolinealidad
+# &lt;span style="font-size:80%"&gt;Multicolinealidad&lt;/span&gt;
+&lt;spam style="font-size:95%"&gt;
+
+- Un problema con el modelo GWR es la &lt;span style="color:blue"&gt;correlación con los coeficientes estimados&lt;/span&gt;, parcialmente debido a la &lt;span style="color:blue"&gt;colinealidad&lt;/span&gt; en las variables explicatorias de cada modelo local
+
+- &lt;span style="color:blue"&gt;El problema de multicolinealidad surge ya que se están usando valores de las variables explicativas en cada modelo local que son muy similares ya que son cercanas en el espacio&lt;/span&gt;, y al utilizar un ponderador similar para las observaciones cercanas, se está intensificando la similaridad entre las variables explicativas
+
+- &lt;span style="color:blue"&gt;La multicolinealidad de las variables explicatorias localmente ponderadas puede llevar a potencial fuerte dependencia en los coeficientes locales estimados. Esta fuerte dependencia en los coeficientes estimados hace que la interpretación de los coeficientes individuales sea, en el mejor de los casos, tenue, y en el peor, engañosa
+
+- Otro aspecto de la multicolinealidad es que en modelos lineales &lt;span style="color:blue"&gt;las varianzas de los coeficientes se inflan. Varianzas infladas en los coeficientes de regresión asociada a la colinealidad local en el modelo GWR puede llevar a &lt;span style="color:blue"&gt;sobreestimaciones de las magnitudes del efecto de las covariables y a la inversión del signo de los coeficientes&lt;/span&gt;, lo que puede dar lugar a interpretaciones incorrectas de las relaciones en el modelo de regresión
+
+- Otro problema del modelo GWR son los errores estándar asociados a las estimaciones de los coeficientes de regresión. &lt;span style="color:blue"&gt;Los cálculos del error estándar en el modelo GWR son sólo aproximados debido a la reutilización de datos para la estimación de parámetros en múltiples ubicaciones y debido al uso de los datos para estimar tanto el ancho de banda del kernel con validación cruzada como los coeficientes de regresión 
+
+- Además, como ya se ha indicado, la colinealidad local puede aumentar las varianzas de los coeficientes de regresión estimados. Este problema con los errores estándar indica que &lt;span style="color:blue"&gt;los intervalos de confianza de los coeficientes GWR estimados son sólo aproximados y no son exactamente fiables para indicar los efectos estadísticamente significativos de las covariables y la selección de modelos
+
+---
+name: restringido
+# &lt;span style="font-size:80%"&gt;GWR restringido&lt;/span&gt;
+&lt;spam style="font-size:120%"&gt;
+
+- Los problemas derivados de la colinealidad pueden resolverse &lt;span style="color:blue"&gt;limitando la cantidad de variación de los coeficientes de regresión 
+
+- En el caso del modelo GWR, se han propuesto dos versiones de métodos que logran este objetivo: &lt;span style="color:blue"&gt;*geographically weighted ridge regression* (GWRR)&lt;/span&gt; y el &lt;span style="color:blue"&gt;*geographically weighted lasso regression* (GWL)
+
+- Estas técnicas son basadas en las regresiones *ridge* y *lasso*, y los métodos funcionan &lt;span style="color:blue"&gt;penalizando la regresión para limitar la variación de los coeficientes&lt;/span&gt;. En ambos casos, se introduce una restricción en el tamaño de los coeficientes de regresión
+
+- Los coeficientes de la regresión *ridge* minimizan la suma de una penalización sobre el tamaño de los coeficientes al cuadrado y la suma de los residuales al cuadrados
+
+- Los coeficientes del *lasso* minimizan la suma del valor absoluto de los coeficientes y la suma de los residuales al cuadrados
+
+- &lt;span style="color:blue"&gt;Tanto en la regresión *ridge* como en el *lasso*, es práctica común centrar la variable de respuesta, y centrar y escalar las variables explicativas para que tengan varianzas unitarias (estandarizar las variables), porque los métodos dependen de la escala
+
+---
+name: mgwr
+# &lt;span style="font-size:80%"&gt;GWR multi-escala (MGWR)&lt;/span&gt;
+&lt;spam style="font-size:100%"&gt;
+
+- En un modelo GWR estándar &lt;span style="color:blue"&gt;un sólo ancho de banda o *bandwidth* es determinado y aplicado a cada variable explicativa. 
+
+- Sin embargo, en la realidad puede suceder que las &lt;span style="color:blue"&gt;relaciones en algunos procesos espacialmente heterogéneos operen sobre escalas más grandes que en otros 
+
+- En este caso, &lt;span style="color:blue"&gt;la escala de no estacionariedad de la relación determinada por una GWR estándar puede subestimar o sobrestimar la escala de las relaciones individuales entre la variable dependiente y las explicativas 
+
+- Para abordar esta limitación del GWR estándar, un &lt;span style="color:blue"&gt;GWR multi-escala (MGWR)&lt;/span&gt; puede ser usado ([Yang 2014](https://research-repository.st-andrews.ac.uk/bitstream/handle/10023/7052/WenbaiYangPhDThesis.pdf?sequence=3%26isAllowed=y); [Fotheringham, Yang, and Kang 2017](https://www.tandfonline.com/doi/full/10.1080/24694452.2017.1352480); [Oshan et al. 2019](https://www.mdpi.com/2220-9964/8/6/269)) `\(\Longrightarrow\)` Este modelo determina el &lt;span style="color:blue"&gt;*bandwidth* para cada una de las variables explicativas, permitiendo así que varíen las relaciones individuales entre `\(Y\)` y cada `\(X\)`
+
+&lt;img src="f3.png" width="50%" style="display: block; margin: auto;" /&gt;
+
+- Trabajos recientes han sugerido que el MGWR debería ser el GWR por defecto ([Comber et al. 2022](https://onlinelibrary.wiley.com/doi/full/10.1111/gean.12316)), utilizándose un GWR estándar sólo en circunstancias específicas
+
+
+---
+name: r
+# &lt;span style="font-size:80%"&gt;Ejercicio aplicado en R&lt;/span&gt;
+&lt;spam style="font-size:110%"&gt;
+
+En este ejercicio se van a utilizar los datos de Columbus, una ciudad en el estado de Ohio en Estados Unidos. La idea es analizar los efectos del ingreso y el valor de la vivienda sobre el nivel de crimen a nivel de barrio.
+
+Archivos a descargar: 
+- [Descripción de los datos](https://geodacenter.github.io/data-and-lab/columbus/)
+- [Código](https://gusgarciacruz.github.io/EconometriaAvanzadaII/GWR/L5_2.R)
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
