@@ -1,4 +1,4 @@
-#Geographically Weighted Regression
+# Geographically Weighted Regression
 - <span style="font-size:150%">Motivación</span> <br>
 
 - <span style="font-size:150%">Especificación de una GWR</span> <br>
