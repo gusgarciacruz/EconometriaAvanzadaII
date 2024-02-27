@@ -16,6 +16,8 @@ Profesor: [Gustavo A. García](https://gusgarciacruz.github.io/cv)
 
 [Modelos espaciales en datos panel](https://gusgarciacruz.github.io/EconometriaAvanzadaII/ModelosPanelEspacial/ModelosPanelEspacial.html)
 
+[Geographically Weighted Regression](https://gusgarciacruz.github.io/EconometriaAvanzadaII/GWR/GWR.html)
+
 [Trabajo de investigación](https://gusgarciacruz.github.io/EconometriaAvanzadaII/TrabajoInvestigacion/Researchwork2023-II.pdf)
 
 [Mapas](https://github.com/gusgarciacruz/EconometriaAvanzadaII/tree/main/Mapas)
