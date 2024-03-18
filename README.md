@@ -1,9 +1,8 @@
-# Curso de Econometría Avanzada II, PhD\Maestría en Economía, Universidad EAFIT (Medellín-Colombia)
-En este repositorio se encuentra el material del curso de Econometría Avanzada II del PhD\Maestría en Economía de la Universidad EAFIT.
+# Curso de Econometría Avanzada II
 
 Profesor: [Gustavo A. García](https://gusgarciacruz.github.io/cv)
 
-[**Programa del curso**](https://gusgarciacruz.github.io/EconometriaAvanzadaII/EC0809Econometria2-2023II.pdf)<br>
+[**Programa del curso**](https://gusgarciacruz.github.io/EconometriaAvanzadaII/EC0310ECONOMETRIAAVANZADA_2024I.pdf)<br>
 
 **Temas**<br>
 [Una breve introducción a R](https://gusgarciacruz.github.io/EbookR_introduccion/)
