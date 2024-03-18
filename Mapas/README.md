@@ -1,5 +1,5 @@
 # Mapas
-- [Código R](https://gusgarciacruz.github.io/EconometriaAvanzadaII/Mapas/map.R)
+- [Código R](https://gusgarciacruz.github.io/EconometriaAvanzadaII/Mapas/map2.R)
 
 - [Comunas Medellín](https://gusgarciacruz.github.io/EconometriaAvanzadaII/Mapas/LimiteComunaCorregimiento_2014.zip)
 
