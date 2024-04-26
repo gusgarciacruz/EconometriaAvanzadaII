@@ -553,7 +553,7 @@ Supuestos:
 
 Con $n$ observaciones, se puede generalizar:
 
-$$y_{i}=\rho \displaystyle\sum_{j=1}^{n}$$ $$w_{ij}y_{j}+\textbf{x}_{i}\boldsymbol\beta+u_{i}$$
+$$y_{i}=\rho \displaystyle\sum_{j=1}^{n} w_{ij}y_{j}+\textbf{x}_{i}\boldsymbol\beta+u_{i}$$
 $$u_{i}\sim N(0,\sigma^2), i=1,...,n$$
 En notación matricial:
 $$\textbf{Y}=\rho \textbf{W}\textbf{Y}+\textbf{X}\boldsymbol\beta+\textbf{u}$$
@@ -905,4 +905,4 @@ En este ejercicio aplicado se va analizar los crímenes violentos en los estados
 
 - [Datos](https://gusgarciacruz.github.io/EconometriaAvanzadaII/ModelosPanelEspacial/crimes_ts.csv)
 - [Shapefile](https://gusgarciacruz.github.io/EconometriaAvanzadaII/ModelosPanelEspacial/cb_2018_us_state_5m.zip)
-- [Código en R](https://gusgarciacruz.github.io/EconometriaAvanzadaII/ModelosPanelEspacial/L4_2.R)
+- [Código en R](https://gusgarciacruz.github.io/EconometriaAvanzadaII/ModelosPanelEspacial/L4_3.R)

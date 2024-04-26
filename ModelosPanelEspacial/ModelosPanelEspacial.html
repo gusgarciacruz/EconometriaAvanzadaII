@@ -4,7 +4,7 @@
     <title>Modelos espaciales en datos panel</title>
     <meta charset="utf-8" />
     <meta name="author" content="Gustavo A. García   ggarci24@eafit.edu.co                  " />
-    <script src="libs/header-attrs-2.25/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.26/header-attrs.js"></script>
     <script src="libs/fabric-4.3.1/fabric.min.js"></script>
     <link href="libs/xaringanExtra-scribble-0.0.1/scribble.css" rel="stylesheet" />
     <script src="libs/xaringanExtra-scribble-0.0.1/scribble.js"></script>
@@ -529,7 +529,7 @@ Supuestos:
 
 Con `\(n\)` observaciones, se puede generalizar:
 
-`$$y_{i}=\rho \displaystyle\sum_{j=1}^{n}$$` `$$w_{ij}y_{j}+\textbf{x}_{i}\boldsymbol\beta+u_{i}$$`
+`$$y_{i}=\rho \displaystyle\sum_{j=1}^{n} w_{ij}y_{j}+\textbf{x}_{i}\boldsymbol\beta+u_{i}$$`
 `$$u_{i}\sim N(0,\sigma^2), i=1,...,n$$`
 En notación matricial:
 `$$\textbf{Y}=\rho \textbf{W}\textbf{Y}+\textbf{X}\boldsymbol\beta+\textbf{u}$$`
