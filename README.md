@@ -2,7 +2,7 @@
 
 Profesor: [Gustavo A. García](https://gusgarciacruz.github.io/cv)
 
-[Programa del curso](https://gusgarciacruz.github.io/EconometriaAvanzadaII/EC0310ECONOMETRIAAVANZADA_2024I.pdf)<br>
+[Programa del curso](https://gusgarciacruz.github.io/EconometriaAvanzadaII/EC0809Econometria2-2024II.pdf)<br>
 
 **Temas**<br>
 [Una breve introducción a R](https://gusgarciacruz.github.io/EbookR_introduccion/)
@@ -17,6 +17,6 @@ Profesor: [Gustavo A. García](https://gusgarciacruz.github.io/cv)
 
 [Geographically Weighted Regression](https://gusgarciacruz.github.io/EconometriaAvanzadaII/GWR/GWR.html)
 
-[Trabajo de investigación](https://gusgarciacruz.github.io/EconometriaAvanzadaII/TrabajoInvestigacion/Researchwork2024-I.pdf)
+[Trabajo de investigación](https://gusgarciacruz.github.io/EconometriaAvanzadaII/TrabajoInvestigacion/Researchwork2024-II.pdf)
 
 [Mapas](https://gusgarciacruz.github.io/EconometriaAvanzadaII/Mapas/)
