@@ -136,9 +136,9 @@ $c_i$ y $\textbf{x}_{it}$ pueden estar correlacionadas y adicionalmente se permi
 
 <span style="color:blue"> $u_{it}$ y $\textbf{x}_{i,t+1}$ deben estar correlacionadas ya que $x_{i,t+1} = y_{it}$</span>
 
-No obstante, existen muchos modelos, incluyendo el modelo AR(1), para lo cual es razonable asumir que $u_{it}$ esta correlacionado con actuales y pasados valores de $\textbf{x}_{it}$
+No obstante, existen muchos modelos, incluyendo el modelo AR(1), para lo cual es razonable asumir que $u_{it}$ esta incorrelacionado con actuales y pasados valores de $\textbf{x}_{it}$
 
-Para tratar esta correlación, Chamberlain (1992) introduce la \<span style="color:blue">restricción de momentos secuenciales</span>:
+Para tratar esta correlación, Chamberlain (1992) introduce la <span style="color:blue">restricción de momentos secuenciales</span>:
 
 $$E(u_{it}|\textbf{x}_{it},\textbf{x}_{i,t-1},...,\textbf{x}_{i1},c_i)=0, t=1,2,...,T$$
 

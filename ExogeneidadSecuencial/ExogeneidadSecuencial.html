@@ -4,7 +4,7 @@
     <title>Estimación bajo exogeneidad secuencial</title>
     <meta charset="utf-8" />
     <meta name="author" content="Gustavo A. García   ggarci24@eafit.edu.co                  " />
-    <script src="libs/header-attrs-2.14/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.27/header-attrs.js"></script>
     <script src="libs/fabric-4.3.1/fabric.min.js"></script>
     <link href="libs/xaringanExtra-scribble-0.0.1/scribble.css" rel="stylesheet" />
     <script src="libs/xaringanExtra-scribble-0.0.1/scribble.js"></script>
@@ -13,8 +13,8 @@
     <link href="libs/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.css" rel="stylesheet" />
     <script src="libs/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.js"></script>
     <script>window.xaringanExtraClipboard(null, {"button":"<i class=\"fa fa-clipboard\"><\/i>","success":"<i class=\"fa fa-check\" style=\"color: #90BE6D\"><\/i>","error":"<i class=\"fa fa-times-circle\" style=\"color: #F94144\"><\/i>"})</script>
-    <link href="libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
-    <link href="libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+    <link href="libs/font-awesome-6.4.2/css/all.min.css" rel="stylesheet" />
+    <link href="libs/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet" />
     <link href="libs/xaringanExtra-extra-styles-0.2.6/xaringanExtra-extra-styles.css" rel="stylesheet" />
     <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
   </head>
@@ -120,9 +120,9 @@ El modelo de interés es
 
 &lt;span style="color:blue"&gt; `\(u_{it}\)` y `\(\textbf{x}_{i,t+1}\)` deben estar correlacionadas ya que `\(x_{i,t+1} = y_{it}\)`&lt;/span&gt;
 
-No obstante, existen muchos modelos, incluyendo el modelo AR(1), para lo cual es razonable asumir que `\(u_{it}\)` esta correlacionado con actuales y pasados valores de `\(\textbf{x}_{it}\)`
+No obstante, existen muchos modelos, incluyendo el modelo AR(1), para lo cual es razonable asumir que `\(u_{it}\)` esta incorrelacionado con actuales y pasados valores de `\(\textbf{x}_{it}\)`
 
-Para tratar esta correlación, Chamberlain (1992) introduce la \&lt;span style="color:blue"&gt;restricción de momentos secuenciales&lt;/span&gt;:
+Para tratar esta correlación, Chamberlain (1992) introduce la &lt;span style="color:blue"&gt;restricción de momentos secuenciales&lt;/span&gt;:
 
 `$$E(u_{it}|\textbf{x}_{it},\textbf{x}_{i,t-1},...,\textbf{x}_{i1},c_i)=0, t=1,2,...,T$$`
 
