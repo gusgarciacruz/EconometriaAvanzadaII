@@ -303,7 +303,7 @@ Estimación del modelo de datos panel dinámico
 
 - Arellano y Bond (1991): GMM usando todas las variables instrumentales
 
-- El estimador *Pooled* IV que usa $y_{i0}$ como instrumento en $t=2$ y luego ($y_{it-2},y_{it-3}$) para $t=3,...,T$. Este estimador es más eficiente que el enfoque Anderson y Hsiao, pero menos eficiente que el enfoque full GMM
+- El estimador *Pooled* IV que usa $y_{i0}$ como instrumento en $t=2$ y luego $(y_{it-2},y_{it-3})$ para $t=3,...,T$. Este estimador es más eficiente que el enfoque Anderson y Hsiao, pero menos eficiente que el enfoque full GMM
 
 ---
 name: r
