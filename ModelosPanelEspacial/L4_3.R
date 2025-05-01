@@ -3,7 +3,8 @@ library(RColorBrewer); library(classInt); library(lattice)
 library(stargazer); library(sf) 
 library(tidyverse); library(summarytools)
 library(rgeoda); library(tidylog); library(spatialreg)
-library(ggview); library(ggpubr)
+library(ggview); library(ggpubr); library(geostan)
+library(ape)
 
 setwd("C:/Users/ggarci24/OneDrive - Universidad EAFIT/EAFIT/Cursos EAFIT")
 
@@ -37,9 +38,8 @@ plot_mur <- ggplot(data_mur99, aes(x = fct_reorder(state, mur), y = mur)) +
         legend.text=element_text(size=6),
         legend.position = c(0.9,0.5),
         legend.background = element_rect(fill=NA))
-plot_mur
 
-ggview(units = "in", width = 7, height = 5, dpi = 300, bg="white")
+plot_mur + canvas(units = "in", width = 7, height = 5, dpi = 300, bg="white")
 
 ggsave(plot=plot_mur, "./Econometria II Maestría Eco/R/2021-II/Tema 4/plot_mur.png",
        width = 7, height = 5, units = "in", dpi = 300)
@@ -57,7 +57,7 @@ plot(us)
 
 ggplot(us) + 
   geom_sf(data=us, colour = "gray95", fill = "gray90") +
-  geom_sf_text(aes(label = STUSPS), size=1.5, colour = "black") +
+  geom_sf_text(aes(label = STUSPS), size=4, colour = "black") +
   theme_void()
 
 # Pegando los datos al mapa, utilizando la llave FIPS
@@ -78,9 +78,8 @@ ggplot(us_merge) +
   theme(legend.position = c(.85,.2),
         legend.key.size = unit(0.3,"cm"),
         legend.text=element_text(size=3),
-        legend.title=element_text(size=5))
-
-ggview(units = "cm", width = 10, height = 9, dpi = 300, bg="white")
+        legend.title=element_text(size=5)) +
+  canvas(units = "cm", width = 10, height = 9, dpi = 300, bg="white")
 
 ggsave("./Econometria II Maestr?a Eco/R/2021-II/Tema 4/map_rap.png",
        width = 10, height = 9, units = "cm", dpi = 300)
@@ -96,6 +95,11 @@ nb
 We <- nb2listw(nb, style="W")
 names(We)
 We$weights
+
+# Opción que queda en forma de matriz
+W2 <- shape2mat(us, method = 'queen')
+W2e <- row_standardize(W2) |> 
+  as.matrix()
 
 # Graficando la contiguidad
 cnt <- st_centroid(us, of_largest_polygon = T) # construyendo los centroides
@@ -144,6 +148,9 @@ us_merge <- us_merge |>
 moran.test(us_merge$lmur, We)
 moran.mc(us_merge$lmur, listw=We, nsim=9999)
 
+# Otra forma
+Moran.I(us_merge$lmur, W2e)
+
 # Scatterplot de Moran
 # Opción 1
 # Forma sin editar
@@ -151,8 +158,8 @@ mp <- moran.plot(as.vector(scale(us_merge$lmur)), We,
            labels=as.character(us_merge$state), pch=19)
 
 moran.plot(as.vector(scale(us_merge$lmur)), We, labels=as.character(us_merge$state),
-           xlim=c(-4,4), ylim=c(-4,4), pch=19, xlab="Log murder", 
-           ylab="Spatial lag Log murder")
+           xlim=c(-4,4), ylim=c(-4,2), pch=19, xlab="Log murder", 
+           ylab="Spatial lag Log murder") 
 title("Moran scatterplot")
 text(x=2.5, y=-3,"Moran's I=0.4637",cex=.7)
 text(x=2.5, y=-3.6,"P-value=0.000",cex=.7)
@@ -176,7 +183,7 @@ scatt_imoran <- ggplot(us_merge, aes(x=st_lmur, y=lag_st_lmur)) +
                         annotate("text", x = 2, y = -3, label = "Moran's I = 0.4637", size=2) +
                         annotate("text", x=2, y=-3.3, label="P-value = 0.000", size=2)
 
-ggview(scatt_imoran, units = "in", width = 7, height = 4, dpi = 300, bg="white")
+scatt_imoran + canvas(units = "in", width = 7, height = 4, dpi = 300, bg="white")
 
 ggsave("./Econometria II Maestr?a Eco/R/2021-II/Tema 4/scatt_imoran.png", 
        plot=scatt_imoran, width = 7, height = 4, units = "in", dpi = 300)
@@ -188,7 +195,6 @@ us_merge <- us_merge  |>
                                           st_lmur>=0 & lag_st_lmur<0 ~ "HL",
                                           st_lmur<0 & lag_st_lmur>=0 ~ "LH"))
 freq(us_merge$lisa_group)
-
 
 scatt_imoran2 <- ggplot(us_merge,aes(st_lmur, lag_st_lmur)) +
   geom_smooth(formula=y ~ x, method="lm", se=F, size = .5) +
@@ -210,8 +216,8 @@ scatt_imoran2 <- ggplot(us_merge,aes(st_lmur, lag_st_lmur)) +
   annotate("text", x = 2, y = -3, label = "Moran's I = 0.4637", size=1.5) +
   annotate("text", x=2, y=-3.2, label="P-value = 0.000", size=1.5) 
   
+scatt_imoran2 + canvas(units = "in", width = 3, height = 2, dpi = 300, bg="white")
 
-ggview(scatt_imoran2, units = "in", width = 3, height = 2, dpi = 300, bg="white")
 ggsave("./Econometria II Maestr?a Eco/R/2021-II/Tema 4/scatt_imoran2.png", 
        plot=scatt_imoran2, width = 3, height = 2, units = "in", dpi = 300)
 
@@ -237,7 +243,7 @@ mur_map <- ggplot(moran.map) +
         legend.key.size = unit(0.4,"cm"),
         legend.text=element_text(size=6),
         legend.title=element_text(size=7))
-mur_map
+mur_map + canvas(units = "cm", width = 10, height = 7, dpi = 300, bg="white")
 
 summary(moran.map$Ii)
 
@@ -256,10 +262,11 @@ Ii_mur <- ggplot(moran.map) +
         legend.text=element_text(size=7),
         legend.title=element_text(size=7))
 
-Ii_mur
+Ii_mur + canvas(units = "cm", width = 10, height = 9, dpi = 300, bg="white")
 
 ggarrange(mur_map, Ii_mur, 
-          ncol = 2, nrow = 1)
+          ncol = 2, nrow = 1) +
+  canvas(units = "in", width = 12, height = 3, dpi = 300, bg="white")
 
 ggview(units = "in", width = 12, height = 3, dpi = 300, bg="white")
 
@@ -286,12 +293,11 @@ Ii_sig_mur <- ggplot(moran.map) +
         legend.key.size = unit(0.4,"cm"),
         legend.text=element_text(size=7),
         legend.title=element_text(size=7))
-Ii_sig_mur
+Ii_sig_mur + canvas(units = "cm", width = 10, height = 9, dpi = 300, bg="white")
 
 ggarrange(mur_map, Ii_mur, Ii_sig_mur, 
-          ncol = 3, nrow = 1)
-
-ggview(units = "in", width = 12, height = 3, dpi = 300, bg="white")
+          ncol = 3, nrow = 1) +
+  canvas(units = "in", width = 12, height = 3, dpi = 300, bg="white")
 
 # Otra forma de hacer el LISA con rgeoda
 # https://geodacenter.github.io/rgeoda/
@@ -314,8 +320,8 @@ us_merge$cluster = factor(us_merge$cluster,
                                       "Low-Low",
                                       "Not significant")) # convert to factor
 
-ggplot() + geom_sf(data=us_merge, aes(fill = cluster), color=NA) +
-  scale_fill_manual(values = c("red", "pink", "lightblue", "darkblue", "grey95"), drop = FALSE) + 
+ggplot() + geom_sf(data=us_merge, aes(fill = cluster), color=NA, show.legend=TRUE) +
+  scale_fill_manual(values = c("red", "pink", "lightblue", "darkblue", "grey95"), drop=F) + 
   labs(fill = "LISA") +
   guides(fill=guide_legend(title.position = "top")) +
   theme(panel.background = element_rect(fill = "white"), #fondo del gr?fico
@@ -324,11 +330,10 @@ ggplot() + geom_sf(data=us_merge, aes(fill = cluster), color=NA) +
         legend.key.width = unit(0.2,"cm"), #ancho de rectangulo de referencia
         legend.text=element_text(size=4), #tamaño de texto de leyenda
         legend.background = element_rect(fill=NA), #background de la leyenda
-        legend.title=element_text(size=5), #tama?o título leyenda
+        legend.title=element_text(size=6), #tama?o título leyenda
         axis.text = element_blank(), #texto eje X e Y
-        axis.ticks = element_blank()) #eje X e Y
-
-ggview(units = "in", width = 6, height = 3, dpi = 300, bg="white")
+        axis.ticks = element_blank()) +  #eje X e Y
+  canvas(units = "in", width = 6, height = 3, dpi = 300, bg="white")
 
 ggsave("./Econometria II Maestría Eco/R/2021-II/Tema 4/Ii_sig_rap.png", 
        width = 6, height = 3, units = "in", dpi = 300)
@@ -509,7 +514,7 @@ slmtest(log(mur) ~ v_shall + densitym + rpcpi, data=datapanel, listw = We, test=
 
 # Calculo de los efectos directos e indirectos
 set.seed(123456789)
-impacts <- impacts(sdmfe, listw = We, time=length(unique(datapanel$year)))
+impacts <- splm::impacts(sdmfe, listw = We, time=length(unique(datapanel$year)))
 summary(impacts, zstats=TRUE, short=TRUE)
 
 # Otros test - Sin efectos espaciales
