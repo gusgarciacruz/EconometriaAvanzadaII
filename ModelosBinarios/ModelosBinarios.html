@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Modelos de respuesta binaria</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Gustavo A. García   ggarci24@eafit.edu.co                  " />
+    <script src="libs/header-attrs-2.29/header-attrs.js"></script>
+    <script src="libs/fabric-4.3.1/fabric.min.js"></script>
+    <link href="libs/xaringanExtra-scribble-0.0.1/scribble.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra-scribble-0.0.1/scribble.js"></script>
+    <script>document.addEventListener('DOMContentLoaded', function() { window.xeScribble = new Scribble({"pen_color":["#FF0000"],"pen_size":3,"eraser_size":30,"palette":[]}) })</script>
+    <script src="libs/clipboard-2.0.6/clipboard.min.js"></script>
+    <link href="libs/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.js"></script>
+    <script>window.xaringanExtraClipboard(null, {"button":"<i class=\"fa fa-clipboard\"><\/i>","success":"<i class=\"fa fa-check\" style=\"color: #90BE6D\"><\/i>","error":"<i class=\"fa fa-times-circle\" style=\"color: #F94144\"><\/i>"})</script>
+    <link href="libs/font-awesome-6.5.2/css/all.min.css" rel="stylesheet" />
+    <link href="libs/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet" />
+    <link href="libs/xaringanExtra-extra-styles-0.2.6/xaringanExtra-extra-styles.css" rel="stylesheet" />
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# Modelos de respuesta binaria
+]
+.author[
+### Gustavo A. García <br> <span class="notbold" style="font-size:65%"><a href="mailto:ggarci24@eafit.edu.co" class="email">ggarci24@eafit.edu.co</a></span> <br> <br> <br> <br> <br> <br> <br> <br> <br>
+]
+.date[
+### <span class="notbold" style="font-size:65%">Econometría avanzada II<br> PhD/Maestría en Economía <br> Universidad EAFIT</span>
+]
+
+---
+
+
+
+
+&lt;style&gt;
+.notbold{
+    font-weight:normal
+}
+
+body {
+text-align: justify;
+}
+
+h1{
+      margin-top: -1px;
+      margin-bottom: -3px;
+}
+
+.small-code pre{
+  margin-bottom: -10px;
+  
+}  
+
+.medium-code pre{
+  margin-bottom: 2px;
+  
+}
+
+&lt;/style&gt;
+
+
+
+
+
+
+&lt;font size = "5"&gt;
+
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+
+Link slides en formato [html](https://gusgarciacruz.github.io/EconometriaAvanzadaII/ModelosBinarios/ModelosBinarios.html)
+
+Link slides en formato [PDF](https://gusgarciacruz.github.io/EconometriaAvanzadaII/ModelosBinarios/ModelosBinarios.pdf)
+
+---
+# &lt;span style="font-size:80%"&gt;En este tema&lt;/span&gt;
+
+- &lt;span style="font-size:150%"&gt;[&lt;span style="color:black"&gt;Motivación](#motivacion)&lt;/span&gt; &lt;br&gt; &lt;br&gt;
+
+- &lt;span style="font-size:150%"&gt;[&lt;span style="color:black"&gt;Un ejemplo de modelos binarios: elección del modo de pesca](#ejemplo)&lt;/span&gt; &lt;br&gt; &lt;br&gt;
+
+- &lt;span style="font-size:150%"&gt;[&lt;span style="color:black"&gt;Efectos marginales](#em)&lt;/span&gt; &lt;br&gt; &lt;br&gt;
+
+- &lt;span style="font-size:150%"&gt;[&lt;span style="color:black"&gt;Ejercicio aplicado en R](#r)&lt;/span&gt; &lt;br&gt; &lt;br&gt;
+
+---
+# &lt;span style="font-size:80%"&gt;Lecturas&lt;/span&gt;
+- &lt;span style="font-size:120%"&gt;Cameron, A.C., Fotheringham, A.,  Trivedi, P.K. (2005). *Microeconometrics: Methods and Applications*. Cambridge University Press. &lt;span style="color:red"&gt;Cap. 15&lt;/span&gt;
+
+---
+name: motivacion
+# &lt;span style="font-size:80%"&gt;Motivación&lt;/span&gt;
+&lt;font size = "4"&gt;
+
+- Los modelos de &lt;span style="color:blue"&gt;elección discreta&lt;/span&gt; o &lt;span style="color:blue"&gt;respuesta cualitativa&lt;/span&gt; son modelos que tienen como variable dependiente un indicador entre *m* alternativas mutuamente excluyentes y por lo regular no existe un orden natural de las categorias de la variable dependiente
+
+- El caso más simple de respuesta cualitativa, es el de variable dependiente binaria, es decir, que existe que existe sólo dos resultados `\((0\)` y `\(1)\)`. Algunos ejemplos: 
+&lt;p style="margin-bottom:-0.5em"&gt;
+  - si un individuo está o no empleado
+  - si un comprador hace una compra o no
+  - si se viaje en transporte público o privado
+  
+- Resultados binarios son simples de modelar y su estimación usualmente es por máxima verosimilitud, ya que la distribución de los datos es necesariamente definida por el modelo Bernoulli `\(\Longrightarrow\)` si la probabilidad de un resultado es igual a `\(p\)`, entonces la probabilidad del otro resultado debe ser `\((1-p)\)`
+
+- Para aplicaciones en regresiones, la probabilidad `\(p\)` variará entre individuos como una función de los regresores
+
+- Los dos modelos estándar de variable dependiente binaria son los modelos &lt;span style="color:blue"&gt;logit&lt;/span&gt; y &lt;span style="color:blue"&gt;probit&lt;/span&gt;, los cuales especifican diferentes formas funcionales para las probabilidades como una función de los regresores
+
+---
+name: ejem
+# &lt;span style="font-size:80%"&gt;Ejemplo de un resultado binario: elección del modo de pesca&lt;/span&gt;
+
+&lt;font size = "4"&gt;
+
+Supongamos que queremos modelar la elección de pescar desde un bote alquilado o desde un muelle. La variable dependiente es binaria con la siguiente estructura:
+
+`$$\begin{align*}
+y_{i} = 
+\begin{cases}
+      1 \text{ si se pesca desde un bote privado}   \\
+      0 \text{ si se pesca desde un muelle}
+\end{cases} 
+\end{align*}$$`
+
+Asumamos que la única variable explicativa es `\(ln(relp_i)\)`, donde `\(relp\)` es el precio de pescar en bote relativo al precio de pescar desde un muelle:
+
+`$$ln(relp_i) = ln \left( \frac{precio_{bote,i}}{precio_{muelle,i}} \right)$$`
+
+El precio de pescar desde el bote o el muelle varía entre individuos debido a diferentes factores, como por ejemplo, a diferencias en acceso
+
+Se espera que la probabilidad de pescar desde un bote disminuya cuando el precio relativo aumente
+
+---
+# &lt;span style="font-size:80%"&gt;Ejemplo de un resultado binario: elección del modo de pesca&lt;/span&gt;
+
+&lt;font size = "4"&gt;
+
+Para estimar esta relación, se tienen las siguientes opciones:
+&lt;p style="margin-bottom:-0.5em"&gt;
+
+- **OLS**: una regresión por OLS de `\(y_i\)` sobre `\(ln(relp_i)\)`. Sin embargo, esta relación lineal ignora:
+&lt;p style="margin-bottom:-1em"&gt;
+  - la forma discreta de la variable dependiente
+  - no limita las probabilidades predichas entre `\(0\)` y `\(1\)`
+  - el efecto de `\(ln(relp_i)\)` sobre la probabilidad es constante sobre toda las distribución de dicha variable
+
+- **Logit**: `$$p_i = Pr[y_i = 1 |x_i]=\frac{exp(\beta_1 + \beta_2 x_i)}{1 + exp(\beta_1 + \beta_2 x_i)}$$`
+
+- **Probit**: `$$p_i = Pr[y_i = 1 |x_i]=\Phi(\beta_1 + \beta_2 x_i)$$`
+  donde `\(\Phi\)` es la FDA de la normal estándar
+
+Estas funciones no linealies garantizan que:
+  &lt;p style="margin-bottom:-1em"&gt;
+  - `\(0&lt;p_i &lt;1\)`
+  - el efecto marginal sea diferente sobre la distribución de la variable `\(x_i\)`:
+  &lt;p style="text-align: center;"&gt;
+  Logit: `\(\frac{dp_i}{dx_i}=\frac{exp(\beta_1 + \beta_2 x_i)}{(1 + exp(\beta_1 + \beta_2 x_i))^2}\beta_2\)`&lt;br&gt;&lt;br&gt;
+  Probit: `\(\frac{dp_i}{dx_i}=\phi(\beta_1 + \beta_2 x_i)\beta_2\)` 
+
+---
+# &lt;span style="font-size:80%"&gt;Ejemplo de un resultado binario: elección del modo de pesca&lt;/span&gt;
+
+&lt;font size = "4"&gt;
+<div id="tvuuwqesue" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#tvuuwqesue table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#tvuuwqesue thead, #tvuuwqesue tbody, #tvuuwqesue tfoot, #tvuuwqesue tr, #tvuuwqesue td, #tvuuwqesue th {
+  border-style: none;
+}
+
+#tvuuwqesue p {
+  margin: 0;
+  padding: 0;
+}
+
+#tvuuwqesue .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#tvuuwqesue .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#tvuuwqesue .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#tvuuwqesue .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#tvuuwqesue .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#tvuuwqesue .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#tvuuwqesue .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#tvuuwqesue .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#tvuuwqesue .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#tvuuwqesue .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#tvuuwqesue .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#tvuuwqesue .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#tvuuwqesue .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#tvuuwqesue .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#tvuuwqesue .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#tvuuwqesue .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#tvuuwqesue .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#tvuuwqesue .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#tvuuwqesue .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#tvuuwqesue .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#tvuuwqesue .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#tvuuwqesue .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#tvuuwqesue .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#tvuuwqesue .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#tvuuwqesue .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#tvuuwqesue .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#tvuuwqesue .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#tvuuwqesue .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#tvuuwqesue .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#tvuuwqesue .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#tvuuwqesue .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#tvuuwqesue .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#tvuuwqesue .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#tvuuwqesue .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#tvuuwqesue .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#tvuuwqesue .gt_left {
+  text-align: left;
+}
+
+#tvuuwqesue .gt_center {
+  text-align: center;
+}
+
+#tvuuwqesue .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#tvuuwqesue .gt_font_normal {
+  font-weight: normal;
+}
+
+#tvuuwqesue .gt_font_bold {
+  font-weight: bold;
+}
+
+#tvuuwqesue .gt_font_italic {
+  font-style: italic;
+}
+
+#tvuuwqesue .gt_super {
+  font-size: 65%;
+}
+
+#tvuuwqesue .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#tvuuwqesue .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#tvuuwqesue .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#tvuuwqesue .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#tvuuwqesue .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#tvuuwqesue .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#tvuuwqesue .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#tvuuwqesue .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#tvuuwqesue div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  &lt;caption class='gt_caption'&gt;Tabla 1. Elección del modo de pesca (1=bote; 0=muelle)&lt;/caption&gt;
+  <thead>
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="a-"> </th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="OLS">OLS</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="Logit">Logit</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="Probit">Probit</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers=" " class="gt_row gt_left">ln relp</td>
+<td headers="OLS" class="gt_row gt_center">-0.243***</td>
+<td headers="Logit" class="gt_row gt_center">-1.823***</td>
+<td headers="Probit" class="gt_row gt_center">-1.056***</td></tr>
+    <tr><td headers=" " class="gt_row gt_left"></td>
+<td headers="OLS" class="gt_row gt_center">(0.010)</td>
+<td headers="Logit" class="gt_row gt_center">(0.145)</td>
+<td headers="Probit" class="gt_row gt_center">(0.075)</td></tr>
+    <tr><td headers=" " class="gt_row gt_left">Constante</td>
+<td headers="OLS" class="gt_row gt_center">0.784***</td>
+<td headers="Logit" class="gt_row gt_center">2.053***</td>
+<td headers="Probit" class="gt_row gt_center">1.194***</td></tr>
+    <tr><td headers=" " class="gt_row gt_left" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000;"></td>
+<td headers="OLS" class="gt_row gt_center" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000;">(0.013)</td>
+<td headers="Logit" class="gt_row gt_center" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000;">(0.169)</td>
+<td headers="Probit" class="gt_row gt_center" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000;">(0.088)</td></tr>
+    <tr><td headers=" " class="gt_row gt_left">Num.Obs.</td>
+<td headers="OLS" class="gt_row gt_center">630</td>
+<td headers="Logit" class="gt_row gt_center">630</td>
+<td headers="Probit" class="gt_row gt_center">630</td></tr>
+    <tr><td headers=" " class="gt_row gt_left">R2</td>
+<td headers="OLS" class="gt_row gt_center">0.463</td>
+<td headers="Logit" class="gt_row gt_center"></td>
+<td headers="Probit" class="gt_row gt_center"></td></tr>
+    <tr><td headers=" " class="gt_row gt_left">R2 Adj.</td>
+<td headers="OLS" class="gt_row gt_center">0.462</td>
+<td headers="Logit" class="gt_row gt_center"></td>
+<td headers="Probit" class="gt_row gt_center"></td></tr>
+    <tr><td headers=" " class="gt_row gt_left">Log.Lik.</td>
+<td headers="OLS" class="gt_row gt_center">-195.167</td>
+<td headers="Logit" class="gt_row gt_center">-206.827</td>
+<td headers="Probit" class="gt_row gt_center">-204.411</td></tr>
+  </tbody>
+  <tfoot class="gt_sourcenotes">
+    <tr>
+      <td class="gt_sourcenote" style="font-size: x-small;" colspan="4">* p &lt; 0.1, ** p &lt; 0.05, *** p &lt; 0.01</td>
+    </tr>
+    <tr>
+      <td class="gt_sourcenote" style="font-size: x-small;" colspan="4">Nota: Errores estándar en paréntesis</td>
+    </tr>
+  </tfoot>
+  
+</table>
+</div>
+
+---
+# &lt;span style="font-size:80%"&gt;Ejemplo de un resultado binario: elección del modo de pesca&lt;/span&gt;
+
+&lt;p style="text-align: center;"&gt;
+&lt;img src="ModelosBinarios_files/figure-html/unnamed-chunk-2-1.png" width="864" /&gt;
+
+---
+name: em
+# &lt;span style="font-size:80%"&gt;Efectos marginales&lt;/span&gt;
+
+&lt;font size = "4"&gt;
+
+En términos generales el modelo de elección binaria es determinado por:
+
+`$$\begin{align*}
+y_{i} = 
+\begin{cases}
+      1 \text{ con probabilidad } p   \\
+      0 \text{ con probabilidad } 1-p
+\end{cases} 
+\end{align*}$$`
+
+`$$p_i = Pr[y_i=1|\mathbf{x}_i]=F(\mathbf{x}_{i}^{'}\boldsymbol{\beta}),$$`
+donde `\(F(\cdot)\)` es la función de distribución que puede ser logística (logit) o normal estándar (probit)
+
+El mayor interés en estos modelos es determinar el &lt;span style="color:blue"&gt;efecto marginal&lt;/span&gt; de cambios en un regresor sobre la porbabilidad condicional que `\(y=1\)`. Asumiendo un regresor continuo, el efecto marginal viene determinado por:
+
+`$$\frac{\partial Pr[y_i=1|\mathbf{x}_i]}{\partial x_{ij}}=F^{'}(\mathbf{x}_{i}^{'}\boldsymbol{\beta})\beta_j,$$`
+donde `\(F^{'}(z) = \partial F(z)/\partial z\)`
+
+---
+# &lt;span style="font-size:80%"&gt;Efectos marginales&lt;/span&gt;
+
+&lt;font size = "4"&gt;
+
+Existen dos tipos de efectos marginales:
+
+&lt;span style="color:blue"&gt;Efecto parcial en el promedio&lt;/span&gt;
+`$$\frac{\partial Pr[y_i=1|\mathbf{x}_i]}{\partial x_{ij}}=F^{'}(\overline{\mathbf{x}}_{i}^{'}\hat{\boldsymbol{\beta}})\hat{\beta}_j$$`
+&lt;span style="color:blue"&gt;Efecto parcial promedio&lt;/span&gt;
+
+`$$\frac{\partial Pr[y_i=1|\mathbf{x}_i]}{\partial x_{ij}}=\left[n^{-1}\sum_{i=1}^n F^{'}(\mathbf{x}_i \hat{\boldsymbol{\beta}})\right]\hat{\beta}_j$$`
+&lt;span style="color:red"&gt;Importante&lt;/span&gt;: la interpretación de los efectos marginales se debe dar en término de &lt;span style="color:blue"&gt;puntos porcentuales&lt;/span&gt; y &lt;span style="color:blue"&gt;NO en términos de porcentajes&lt;/span&gt;
+
+Por ejemplo, en la probabilidad de empleo, se encuentra un efecto marginal de la educación de 0.03, lo cual indica que un año de educación incrementa la probabilidad de estar empleado en 3 puntos porcentuales   
+
+---
+name: r
+# &lt;span style="font-size:80%"&gt;Ejercicio aplicado en R&lt;/span&gt;
+&lt;spam style="font-size:110%"&gt;
+
+En este ejercicio se va a utilizar la base de datos *fishing* de Cameron y Trivedi (2005), sobre el modo de pesca 
+
+Archivos a descargar:
+&lt;p style="margin-bottom:-1em"&gt;
+- [Descripción de los datos](https://cran.r-project.org/web/packages/camerondata/camerondata.pdf)
+- [Código](https://gusgarciacruz.github.io/EconometriaAvanzadaII/ModelosBinarios/L6.R)
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+  "highlightStyle": "github",
+  "highlightLines": true,
+  "countIncrementalSlides": false,
+  "ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

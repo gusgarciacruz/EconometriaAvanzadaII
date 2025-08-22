@@ -3,4 +3,6 @@
 
 - <span style="font-size:150%">Un ejemplo de modelos binarios: elección del modo de pesca</span> <br>
 
+- <span style="font-size:150%">Efectos marginales</span> <br>
+
 - <span style="font-size:150%">Ejercicio aplicado en R</span>
