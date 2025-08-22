@@ -17,7 +17,7 @@ data <- fishing |> filter(mode %in% c(2,4))|>
 freq(data$mode)
 
 df <- data |> group_by(mode) |> 
-  summarise(precio_bote   = mean(pcharter),
+  dplyr::summarise(precio_bote   = mean(pcharter),
             precio_muelle = mean(ppier),
             lnrelp        = mean(lnrelp),
             probabilidad  = (n()/630)*100,
@@ -94,20 +94,23 @@ summary(probit2)
 newdata <- data.frame("lnrelp" = seq(from = -2.2, to = 4.1, length.out = 20),
                       "bing" = 1)
 
-newdata[,c("pbing1","se1")] <- predict(probit2, 
-                                       newdata,
-                                       type = "response", se.fit = TRUE)[-3]
-
-newdata[,c("bing")] <- 0
-
-newdata[,c("pbing0","se0")] <- predict(probit2, 
-                                       newdata,
-                                       type = "response", se.fit = TRUE)[-3]
-
-newdata$pbing1_lb <- newdata$pbing1-qt(0.025, 20-1, lower.tail = FALSE)*newdata$se1
-newdata$pbing1_ub <- newdata$pbing1+qt(0.025, 20-1, lower.tail = FALSE)*newdata$se1
-newdata$pbing0_lb <- newdata$pbing0-qt(0.025, 20-1, lower.tail = FALSE)*newdata$se0
-newdata$pbing0_ub <- newdata$pbing0+qt(0.025, 20-1, lower.tail = FALSE)*newdata$se0
+newdata <- newdata %>% 
+  mutate(pbing1 = predict(probit2,
+                          ., 
+                          type = "response", se.fit = TRUE)$fit,
+         se1 = predict(probit2,., 
+                       type = "response", se.fit = TRUE)$se.fit)%>% 
+  mutate(bing=0)%>%
+  mutate(pbing0 = predict(probit2, 
+                          .,
+                          type = "response", se.fit = TRUE)$fit,
+         se0 = predict(probit2, 
+                       .,
+                       type = "response", se.fit = TRUE)$se.fit) |> 
+  mutate(pbing1_lb = pbing1-qt(0.025, 20-1, lower.tail = FALSE)*se1,
+         pbing1_ub = pbing1+qt(0.025, 20-1, lower.tail = FALSE)*se1,
+         pbing0_lb = pbing0-qt(0.025, 20-1, lower.tail = FALSE)*se0,
+         pbing0_ub = pbing0+qt(0.025, 20-1, lower.tail = FALSE)*se0)
 
 ggplot(newdata) +
   geom_line(aes(x = lnrelp, y =pbing1), colour="blue") +
