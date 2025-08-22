@@ -2,10 +2,12 @@
 
 Profesor: [Gustavo A. García](https://gusgarciacruz.github.io/cv)
 
-[Programa del curso](https://gusgarciacruz.github.io/EconometriaAvanzadaII/EC0310ECONOMETRIAAVANZADA-2025I.pdf)<br>
+[Programa del curso](https://gusgarciacruz.github.io/EconometriaAvanzadaII/EC0809Econometria2-2025II.pdf)<br>
 
 **Temas**<br>
 [Una breve introducción a R](https://gusgarciacruz.github.io/EbookR_introduccion/)
+
+[Modelos de respuesta binaria](https://gusgarciacruz.github.io/EconometriaAvanzadaII/ModelosBinarios/ModelosBinarios.html)
 
 [Modelos lineales de datos panel](https://gusgarciacruz.github.io/EconometriaAvanzadaII/ModelosPanel/ModelosPanel.html)
 
