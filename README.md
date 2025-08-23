@@ -19,6 +19,6 @@ Profesor: [Gustavo A. García](https://gusgarciacruz.github.io/cv)
 
 [Geographically Weighted Regression](https://gusgarciacruz.github.io/EconometriaAvanzadaII/GWR/GWR.html)
 
-[Trabajo de investigación](https://gusgarciacruz.github.io/EconometriaAvanzadaII/TrabajoInvestigacion/Researchwork2025-I.pdf)
+[Trabajo de investigación](https://gusgarciacruz.github.io/EconometriaAvanzadaII/TrabajoInvestigacion/Researchwork2025-II.pdf)
 
 [Mapas](https://gusgarciacruz.github.io/EconometriaAvanzadaII/Mapas/)
