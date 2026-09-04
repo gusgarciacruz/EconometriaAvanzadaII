@@ -45,7 +45,7 @@ ggsave(plot=plot_mur, "./Econometria II Maestría Eco/R/2021-II/Tema 4/plot_mur.
        width = 7, height = 5, units = "in", dpi = 300)
 
 # Cargando el mapa 
-us <- st_read("./Econometria II Maestría Eco/ToDo/cb_2018_us_state_5m/cb_2018_us_state_5m.shp") |> 
+us <- st_read("./Econometria II Maestría Eco/ToDo/cb_2018_us_state_5m/cb_2018_us_state_5m.shp")|> 
       filter(!is.na(STUSPS) & !STUSPS %in% c('AK','HI','GU','AS','PR','VI', 'MP')) |>  # Eliminando los NA, Alaska, Hawaii, Guam, American Samoa, Puerto Rico, Islas Virgin
       mutate(fipsstat = as.numeric(STATEFP)) |> 
       arrange(fipsstat) |>  
@@ -113,7 +113,11 @@ ggplot() +
   geom_sf(data = line_nb, fill = "grey40", size=.4) +
   theme_void()
 
-# 6 vecinos más cercanos
+# 6 vecinos más cercanos (https://www.mdpi.com/2225-1146/2/4/217)
+# Para definir el k se puede seguir la siguiente literatura:
+# - the cube root of the number of observations: https://geodacenter.github.io/workbook/4c_distance_functions/lab4c.html#concepts-1
+# - AIC: https://www.tandfonline.com/doi/full/10.1080/17421772.2023.2176539
+
 coords <- st_centroid(st_geometry(us), of_largest_polygon=TRUE)
 plot(coords)
 knn6 <- knearneigh(coords, k=6)
@@ -165,8 +169,10 @@ text(x=2.5, y=-3,"Moran's I=0.4637",cex=.7)
 text(x=2.5, y=-3.6,"P-value=0.000",cex=.7)
 
 # Opción 2
-us_merge$st_lmur <- scale(us_merge$lmur)
-us_merge$lag_st_lmur <- lag.listw(We, us_merge$st_lmur)
+us_merge <- us_merge |> 
+  mutate(st_lmur = as.vector(scale(lmur)),
+         lag_st_lmur = as.vector(lag.listw(We, us_merge$st_lmur)))
+
 scatt_imoran <- ggplot(us_merge, aes(x=st_lmur, y=lag_st_lmur)) + 
                         geom_point(shape=1, size=1) + 
                         geom_smooth(formula=y ~ x, method="lm", se=F) + 
@@ -189,7 +195,7 @@ ggsave("./Econometria II Maestr?a Eco/R/2021-II/Tema 4/scatt_imoran.png",
        plot=scatt_imoran, width = 7, height = 4, units = "in", dpi = 300)
 
 # Opción 3
-us_merge <- us_merge  |> 
+us_merge <- us_merge |> 
             mutate(lisa_group = case_when(st_lmur>=0 & lag_st_lmur>=0 ~ "HH",
                                           st_lmur<0 & lag_st_lmur<0 ~ "LL",
                                           st_lmur>=0 & lag_st_lmur<0 ~ "HL",
@@ -267,8 +273,6 @@ Ii_mur + canvas(units = "cm", width = 10, height = 9, dpi = 300, bg="white")
 ggarrange(mur_map, Ii_mur, 
           ncol = 2, nrow = 1) +
   canvas(units = "in", width = 12, height = 3, dpi = 300, bg="white")
-
-ggview(units = "in", width = 12, height = 3, dpi = 300, bg="white")
 
 # Plot LISA clusters
 # Construyendo los cuadrantes high-high, low-low, high-low, low-high quadrant y no signficante
